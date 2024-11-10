@@ -1,55 +1,171 @@
 ---
-title: "My Final Project Template"
-author: Your name here
-subtitle: Subtitle here if desired
+title: "Tree Top Clustering at Letchworth Learning Forest"
+author: "Tina Ni"
+subtitle: "Utlizing Lidar Point Cloud Data to Map Out Forest Tree Top Clustering"
 date: today
 date-format: long
 ---
 
 # Introduction
 
-\[\~ 200 words\]
+\[\~ 200 words\] Understanding forest structure and characteristics is difficult to
 
-Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way. Include figures if you like.
+Forest structur are difficult to model and characterize when forest area is large. Field modeling and characterizing can be time and labor intensive. The utilization of remote sensing tools can be greatly beneficial to understanding forest characteristics and structure.
+
+In this project, I would like to find out if there are spatial clustering of similar tree heights in the Letchworth Teaching Forest using vertical forest structure complexity. Understanding forest structure can be used for future research on deepling the understanding of forest landscape, biodiveristy, and forest disturbance history.
 
 # Materials and methods
 
 \[\~ 200 words\]
 
-Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.
+This project will be utilizing remote sensing data and R-programming packages specialized in forest modeling. The most recent LiDAR Point Cloud Data, from 2019, will be analyzed and processed in R-Studio.
 
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
+Initially, the LiDAR Point-Cloud Data must be filtered and cropped to remove land cover outside of the forest parameter and also filter out any points with outlier z data. This will be used using crop() and filter(), respectivly.
 
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
+The data will be processed using LidR package to model individual trees and thier associated canopy hieghts. This data will then be put into a database and use find spatial clustering of x,y, and z coordinated using the dbscan()package.
 
-You can do bullets like this:
-
--   The first most important thing
--   The second most important thing
--   The third most important thing
-
-You can do numbers like this:
-
-1.  The first most important thing
-2.  The second most important thing
-3.  The third most important thing
-
-See <http://rmarkdown.rstudio.com/> for all the amazing things you can do.
+Still figuring out how to visualize clustering and the visual, clustering on to either leaflet or another map.
 
 Here's my first code chunk.
 
-```{r}
+```{r Load Packages, include = FALSE}
+library("sf")
+library("terra")
+library("lidR")
+library("future")
+library("raster")
+library("ggplot2")
+library("dplyr")
+library("dbscan")
+library("tidyverse")
+```
+
+```{r Read Data and Crop data}
+full_las <- readLAS("C:/Users/Tinanope28/Documents/School/Fall 2024/Spatial Data Science/Letchworth_Teaching_Forest_Lidar.laz", select = "-keep_first -keep_class 3 4 5")
+
+##polygon sf coords
+polygon_coords <- matrix(c(
+  1388000, 2349355, #right bottom corner
+  1388000, 2349700, #right top corner
+  1387450, 2349700, #mid top corner
+  1387450, 2349450, #mid mid corner
+  1387300, 2349200, #left bottom corner
+  1387350, 2349200, #mid bottom corner
+  1388000, 2349355  #right bottom corner
+  ), ncol = 2, byrow = TRUE)
+
+##polygon sf
+polygon <- st_polygon(list(polygon_coords))
+
+##polygon with full_las coords ref system 
+sf_polygon <- st_sfc(polygon, crs = st_crs(full_las))
+
+##clip full_las data to sf_polygon shape
+Letch_LAS <- lidR::clip_roi(full_las, sf_polygon)
+
+plot(Letch_LAS)
+
+
+##this doesnt work below
+# LASxy <- Letch_LAS@data[, c("X", "Y", "Z")]
+# LASxy[,3] <- NULL
+# 
+# DEM_bbox <- extent(DEM)
+# 
+# # Filter out points that are outside the DEM's extent
+# coords_in_DEM <- Letch_LAS@data [ 
+#   Letch_LAS@data$X >= DEM_bbox@xmin & 
+#   Letch_LAS@data$X <= DEM_bbox@xmax &
+#   Letch_LAS@data$Y >= DEM_bbox@ymin & 
+#   Letch_LAS@data$Y <= DEM_bbox@ymax, ]
 
 ```
 
+```{r Read TIF DEM file and extract it to Letch}
+DEM <- raster ("C:/Users/Tinanope28/Documents/School/Fall 2024/Spatial Data Science/LetchworthDEM.tif")
+plot (DEM)
+
+Letch_LAS <- merge_spatial(Letch_LAS, DEM, "zdem")
+rasValue <- Letch_LAS$zdem
+
+## this also doesnt work below :(
+# # Add the elevation values as a new attribute to the LAS object
+# elevation_values <- extract(DEM, LASxy)
+# 
+# add_attribute(Letch_LAS, "elevation", elevation_values)
+# 
+# Letch_LAS$elevation <- extract(DEM, LASxyz[,c("X", "Y")])
+```
+
+```{r filter z Letch}
+##manually removed outlier points since they would effect canopy heights
+  filtered_Letch <- filter_poi(Letch_LAS, Z >= 182, Z <= 220)
+  plot(filtered_Letch)
+```
+
+```{r clustering?}
+chm <- rasterize_canopy(filtered_Letch, 0.25, pitfree(subcircle = 1))
+tree_tops <- locate_trees(filtered_Letch, lmf (ws= 25)) #ws = 25 is nice
+
+
+
+plot(chm, col = height.colors(15))
+plot(st_geometry(tree_tops), add = TRUE, col = "black",  pch= 7)
+```
+
+```{r segment_trees}
+seg <- segment_trees(filtered_Letch, li2012())
+plot(seg, color = "treeID",  pal = random.colors(100))
+```
+
+```{r}
+#this doesnt work how I want it to work
+# #Separate the forest into 3 sections
+# thirty_threeP<- quantile(filtered_Letch$Z, 0.3333, na.rm = TRUE)
+# sixity_sixP <- quantile(filtered_Letch$Z, 0.6666, na.rm = TRUE)
+# 
+# Separatedheights <- classify_poi(filtered_Letch, ~ifelse(Z < thirty_threeP, "low",
+#                                  ifelse(Z < sixity_sixP, "medium", "tall")))
+```
+
+```{r smoothed by median filter}
+kernel <- matrix (1, 3, 3)
+chm_smoothed <- terra::focal(chm, w = kernel, fun = median, na.rm = TRUE)
+ttops_chm_smoothed <- locate_trees(chm_smoothed, lmf(5))
+                                   
+Ind_Tree_Seg_Algo <- dalponte2016(chm_smoothed, ttops_chm_smoothed)
+filtered_Letch <- segment_trees(filtered_Letch, Ind_Tree_Seg_Algo)
+
+plot(filtered_Letch, bg = "white", size = 4, color = "treeID", height = TRUE, treetops = TRUE)                                   
+```
+
+```{r}
+##INPROGRESS DO SOME DATA MANIPUILATION FOR TREE-COORDS
+tree_top_coords <- as.data.frame(ttops_chm_smoothed)
+
+tree_coords <- tree_top_coords %>%
+  separate("geometry", into = c("V1","V2","x","y","z"), sep = " ")
+
+# Perform DBSCAN clustering on the tree top coordinates
+dbscan_result <- dbscan(tree_tops[ , c("x", "y")], eps = 10, minPts = 5)
+
+# Add the cluster labels to the data
+tree_top_coords$cluster <- dbscan_result$cluster
+```
 
 Load any required packages in a code chunk (you may need to install some packages):
 
 ```{r, message=F, warning=F}
-
+# install.packages("sf")
+# install.packages("terra")
+# install.packages("lidR")
+# install.packages("future")
+# install.packages("raster")
+# install.packages("ggplot2")
+# install.packages("dplyr")
+# install.packages("dbscan")
+# install.packages("tidyverse")
 ```
-
-
 
 # Conclusions
 
