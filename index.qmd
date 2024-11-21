@@ -1,7 +1,7 @@
 ---
 title: "Tree Top Clustering at Letchworth Learning Forest"
 author: "Tina Ni"
-subtitle: "Utlizing Lidar Point Cloud Data to Map Out Forest Tree Top Clustering"
+subtitle: "Utilizing Lidar Point Cloud Data to Map Out Forest Tree Top Clustering"
 date: today
 date-format: long
 ---
