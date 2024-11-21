@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Your name here">
-<meta name="dcterms.date" content="2024-10-21">
+<meta name="author" content="Tina Ni">
+<meta name="dcterms.date" content="2024-11-21">
 
-<title>My Final Project Template – GEO511_FinalProject</title>
+<title>Tree Top Clustering at Letchworth Learning Forest – GEO511_FinalProject</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -68,6 +102,16 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-binding-2.2.2/leaflet.js"></script>
 
 
 </head>
@@ -114,8 +158,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">My Final Project Template</h1>
-<p class="subtitle lead">Subtitle here if desired</p>
+<h1 class="title">Tree Top Clustering at Letchworth Learning Forest</h1>
+<p class="subtitle lead">Utilizing Lidar Point Cloud Data to Map Out Forest Tree Top Clustering</p>
 </div>
 
 
@@ -125,14 +169,14 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Your name here </p>
+             <p>Tina Ni </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 21, 2024</p>
+      <p class="date">November 21, 2024</p>
     </div>
   </div>
   
@@ -147,32 +191,218 @@ ul.task-list li input[type="checkbox"] {
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>[~ 200 words]</p>
-<p>Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way. Include figures if you like.</p>
+<p>Observing forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve due to resource restrictions. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely.</p>
 </section>
 <section id="materials-and-methods" class="level1">
 <h1>Materials and methods</h1>
 <p>[~ 200 words]</p>
-<p>Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.</p>
-<p>Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.</p>
-<p>Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g.&nbsp;Figshare) so that others are able to re-run your code.</p>
-<p>You can do bullets like this:</p>
-<ul>
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ul>
-<p>You can do numbers like this:</p>
-<ol type="1">
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ol>
-<p>See <a href="http://rmarkdown.rstudio.com/" class="uri">http://rmarkdown.rstudio.com/</a> for all the amazing things you can do.</p>
-<p>Here’s my first code chunk.</p>
+<p>In this project, I utilized 2019 remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. &nbsp;By looking at vertical structure, I was able to find spatial clustering of the tallest (90%) woody individuals.</p>
+<p>These clusters were then projected onto the latest leaflet map, to see if the forest parameter has been altered following the remote sensing date.</p>
+<p>The main r packages that were utilized were lidR, terra, and raster.</p>
+<p>Here’s my current on-going code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"sf"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"terra"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lidR"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"raster"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dbscan"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"leaflet"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"RColorBrewer"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>las <span class="ot">&lt;-</span> <span class="fu">readLAS</span>(<span class="st">"data/Letchworth_Teaching_Forest_Lidar.laz"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#st_crs(las)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Look at the parameter coordinates of original data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>original_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(las)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot3d(las$X, las$Y, las$Z, col = rainbow(1000))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>polygon_coords <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1388000</span>, <span class="dv">2349355</span>, <span class="co">#right bottom corner</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1388000</span>, <span class="dv">2349700</span>, <span class="co">#right top corner</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1387450</span>, <span class="dv">2349700</span>, <span class="co">#mid top corner</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1387450</span>, <span class="dv">2349450</span>, <span class="co">#mid mid corner</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1387300</span>, <span class="dv">2349200</span>, <span class="co">#left bottom corner</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1387350</span>, <span class="dv">2349200</span>, <span class="co">#mid bottom corner</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1388000</span>, <span class="dv">2349355</span>  <span class="co">#right bottom corner</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Bounding Box has been given CRS associated with las-CRS </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>polygon_sf <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_polygon</span>(<span class="fu">list</span>(polygon_coords)),  <span class="at">crs =</span> <span class="fu">st_crs</span>(las))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(polygon_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/Create a new bounding box that only includes the forest area-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>las_clipped <span class="ot">&lt;-</span> lidR<span class="sc">::</span><span class="fu">clip_roi</span>(las, polygon_sf)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Check if the crs is still the same</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(polygon_sf) <span class="sc">==</span> <span class="fu">st_crs</span>(las)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Filter out any OUTliers z-values from las</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#filterOUT_las &lt;- filter_poi(las_clipped, Z &gt;= 182, Z &lt;= 220)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>filterOUT_las <span class="ot">&lt;-</span> <span class="fu">filter_poi</span>(las_clipped, Z <span class="sc">&gt;=</span> <span class="dv">180</span>, Z <span class="sc">&lt;=</span> <span class="dv">220</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># rglwidget(plot(filterOUT_las))</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot3d(filterOUT_las$X, filterOUT_las$Y, filterOUT_las$Z)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Reproject the las to 4326 for Leaflet</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(las_clipped, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"X"</span>, <span class="st">"Y"</span>), <span class="at">crs =</span> <span class="dv">26918</span>) <span class="co"># crs was NAD83(2011)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(las_clipped, <span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
+GDAL Error 1: PROJ: vgridshift: could not find required grid(s).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
+GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
+(File not found or invalid)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
+GDAL Error 1: PROJ: vgridshift: could not find required grid(s).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
+GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
+(File not found or invalid)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">15</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a dataframe of points lat and long to check if st_transform worked  </span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>las_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lat =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">2</span>],</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">long =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">1</span>])</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>lat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 43.005 43.006 43.007 43.009 43.008</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] -78.797 -78.796 -78.795 -78.794 -78.793 -78.792 -78.791 -78.790 -78.789
+[10] -78.788 -78.787</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## LidR functions to find individual trees</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>chm <span class="ot">&lt;-</span> <span class="fu">rasterize_canopy</span>(filterOUT_las, <span class="fl">0.25</span>, <span class="fu">pitfree</span>(<span class="at">subcircle =</span> <span class="dv">1</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>tree_tops <span class="ot">&lt;-</span> <span class="fu">locate_trees</span>(chm, <span class="fu">lmf</span> (<span class="at">ws=</span><span class="dv">5</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>filtered_tree_tops <span class="ot">&lt;-</span> tree_tops <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(Z <span class="sc">&gt;=</span> <span class="dv">185</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(chm, col = height.colors(50))</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), pch = 3)</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>nintypercent <span class="ot">&lt;-</span> <span class="fu">quantile</span>(filtered_tree_tops<span class="sc">$</span>Z, <span class="fl">0.90</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>tall_trees <span class="ot">&lt;-</span> filtered_tree_tops[filtered_tree_tops<span class="sc">$</span>Z <span class="sc">&gt;</span> nintypercent,]</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(tall_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tree_Z <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(filtered_tree_tops<span class="sc">$</span>Z)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tree_Z) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"height"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> tree_Z<span class="sc">$</span>height <span class="sc">-</span> <span class="dv">180</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(test)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33.901</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="do">## in meters</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> test, <span class="fu">aes</span>(<span class="at">x =</span> test)) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.2</span>,<span class="at">fill=</span><span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distrubtion of Tree Hieghts"</span>, <span class="at">x =</span> <span class="st">"Hieght (m)"</span>, <span class="at">y =</span> <span class="st">"Tree Count"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/making a histogram of height distribution-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dbscan_result <span class="ot">&lt;-</span> <span class="fu">dbscan</span>(coords, <span class="at">eps =</span> <span class="dv">12</span>, <span class="at">minPts =</span> <span class="dv">5</span>)  </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>tall_trees<span class="sc">$</span>dbscan_cluster <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dbscan_result<span class="sc">$</span>cluster)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span> (tall_trees<span class="sc">$</span>dbscan_cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 0 2 3 4 5 6 7
+Levels: 0 1 2 3 4 5 6 7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tall_trees[<span class="dv">3</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/Findind spatial clustering-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>pal <span class="ot">&lt;-</span> <span class="fu">colorFactor</span>(<span class="fu">brewer.pal</span>(<span class="dv">4</span>, <span class="st">"Set1"</span>), <span class="at">domain =</span> tall_trees<span class="sc">$</span>dbscan_cluster)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>st_tall_trees <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(tall_trees, <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span> (st_tall_trees) <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setView</span>(<span class="at">lng =</span> <span class="sc">-</span><span class="fl">78.793</span>, <span class="at">lat =</span> <span class="fl">43.007</span>, <span class="at">zoom =</span> <span class="dv">13</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">2</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="sc">~</span><span class="fu">pal</span>(dbscan_cluster),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"ID:"</span>, treeID, <span class="st">"&lt;br&gt; Height:"</span>, Z))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-7160ab13ae04835350a6" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-7160ab13ae04835350a6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"setView":[[43.007,-78.79300000000001],13,[]],"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addCircleMarkers","args":[[43.00807362887201,43.00808029477482,43.00798126509555,43.00799562009939,43.0078787618943,43.00793534643397,43.00794067884073,43.00773024566031,43.00772581171038,43.00792759412573,43.00775601393183,43.00771363012377,43.00773003112882,43.00768801982632,43.00770237396046,43.0075799055879,43.00757553388924,43.0076473708726,43.0074313274966,43.00743973092739,43.00740736097664,43.00760439224759,43.00728602900723,43.00725226363254,43.00719316884421,43.00695059763,43.00693692441914,43.00691726724027,43.00691190341814,43.00692021276695,43.00684570764984,43.00685088568267,43.0068257094904,43.00682859306821,43.00681594299824,43.00677820977804,43.00677687670586,43.0067371591848,43.00696608976595,43.00683491639387,43.00696559217562,43.0070228512533,43.00696683178042,43.00697132604888,43.00689031755675,43.00688467506886,43.00683472891738,43.00701091293335,43.00697991133043,43.00694425943252,43.00690718116553,43.00681975322946,43.00690581644535,43.00699395213506,43.00693148480363,43.00683364081957,43.00688302737771,43.00679860723917,43.0067486296947,43.00695560136415,43.00688628214279,43.00696387830892,43.00692401035955,43.00686436307602,43.0068192542407,43.00685502953348,43.00657010418936,43.00688652628396,43.00686745910266,43.00684594324778,43.00691225465466,43.00681118858841,43.00679413640552,43.00680545166674,43.00672227182782,43.00676753387597,43.00684054125416,43.0067456453595,43.00678281512344,43.00674155116121,43.00674821633324,43.00677710850005,43.00679936549827,43.00672505473609,43.00670087330099,43.00681982358056,43.00679765826732,43.00670375559147,43.00669538372076,43.00674724765292,43.00670536451351,43.00674597387695,43.00663557746105,43.0066230835889,43.0067428409001,43.00665885822082,43.00661861397403,43.00657753610545,43.00661048930407,43.00655948875493,43.00668020597359,43.0065605726018,43.0065488512442,43.00663757408042,43.00657395572438,43.00651936309315,43.00648107641717,43.00659394982946,43.00653076905636,43.00651430642774,43.00647037787442,43.00655965506622,43.00654040192622,43.00644358538846,43.00650143203902,43.00646841602933,43.00643769220827,43.00641149647095,43.00654309177022,43.0063371851238,43.00634729127528,43.00651298812517,43.00650192091155,43.00642212673807,43.00639915517941,43.00635888413515,43.00645241271805,43.00645464436222,43.0063095903237,43.00639323161052,43.00635339422343,43.00650151257913,43.00638867295407,43.00642556308375,43.00646790807815,43.00641151861004,43.00624330490785,43.00642311008378,43.00641346838295,43.00626354805946,43.00636975779481,43.0063248374277,43.00638875958118,43.00636761709996,43.00647140341515,43.00634607145796,43.00643600074701,43.00628006871947,43.00643283714846,43.00634219311598,43.0062223115367,43.00620135415939,43.00629507155434,43.00631345405988,43.00627116835127,43.00618129453314,43.00628995400216,43.0063332922501,43.00621319471773,43.00619105895627,43.00622013759686,43.00639891469861,43.00623247532265,43.00629556153245,43.00627745663488,43.00622435050828,43.00629974302769,43.00617360081198,43.00631127383907,43.00624260752515,43.00614507781435,43.00632146949851,43.0061719549525,43.00627050569148,43.00623166141524,43.00617647948768,43.00607842005586,43.00618543699481,43.00614594167362,43.00623323863003,43.00614742837222,43.00622908282191,43.0061168600475,43.0061076211069,43.00615641631359,43.00613344463349,43.00619129157091,43.00612169266937,43.0061819876798,43.00609735598186,43.00622129502168,43.00610699407989,43.00623415512665,43.00613225783987,43.00613498337766,43.00612149799571,43.00609210903475,43.00608001882216,43.00612763382986,43.00615708271323,43.00608981233118,43.00602842958423,43.00612654057791,43.00609680975014,43.00601782179248,43.00613109402116,43.00604404737434,43.00606928017347,43.0060102557211,43.00610074378988,43.00618075081816,43.00617798997406,43.00608375244813,43.00609810368259,43.00596557850179,43.00605526082389,43.00600166245203,43.00597931100805,43.00601217067939,43.00596644520176,43.00600100773714,43.00603591187384,43.00596337275095,43.00601762108145,43.00597732165006,43.00597629403258,43.00594123335633,43.00600211560267,43.00591354747058,43.00593440774409,43.00597169951214,43.00595102097573,43.00589376064562,43.0059470155736,43.00589989614843,43.00592268012009,43.00588020990875,43.00586396418457,43.00589300972944,43.00586476485959,43.00585630207915,43.00587043683297,43.00584585449384,43.00581159491093,43.00537781453023],[-78.7904923062197,-78.79055958620647,-78.78995137573008,-78.79055586933494,-78.78971079219752,-78.79053032403984,-78.7906731708736,-78.78927806781813,-78.78924470573267,-78.79081439430222,-78.79010537211637,-78.79016308311083,-78.79059465514048,-78.79039836940244,-78.79078030392338,-78.79014979812864,-78.79018538149226,-78.7908286592797,-78.78942557365851,-78.78964287513004,-78.78948490785818,-78.79156672559547,-78.79191033429476,-78.79198154255647,-78.79193062249225,-78.79017376254028,-78.7901051167655,-78.79005992250619,-78.7901051595113,-78.79021904226292,-78.7899494573315,-78.79014249395331,-78.78997017497811,-78.79006034983398,-78.79001652257391,-78.78990379348835,-78.78997935920499,-78.78988593811656,-78.79183117216874,-78.79086120179856,-78.7919472762637,-78.79241242072443,-78.79199084737378,-78.79209315409884,-78.79148354188753,-78.79144108138884,-78.79109947533578,-78.79249379578742,-78.79229473468726,-78.79204355922721,-78.79176453270087,-78.79114086757355,-78.79180562614056,-78.79255449573623,-78.79208439606894,-78.79145081985847,-78.79183958537507,-78.79122143086242,-78.79084535309138,-78.7924199794155,-78.79189832090691,-78.79249939010647,-78.79223360535569,-78.79178473671024,-78.79147952518477,-78.79186858932546,-78.78975881454407,-78.79217409988814,-78.79211621823431,-78.7920056668935,-78.79252181464723,-78.79186397485773,-78.79182125780616,-78.79194065109337,-78.79136606809658,-78.79184364068419,-78.7924615390033,-78.79176452900262,-78.79214697183818,-78.79188780902808,-78.79195508785043,-78.79225812033685,-78.79252834646923,-78.79202048636128,-78.79183851309212,-78.79280216090667,-78.79263535159136,-78.79192868786288,-78.79196841406643,-78.79244432113184,-78.79216337280292,-78.79258883137081,-78.79179229223264,-78.7916982728576,-78.79266798513039,-78.79208733600527,-78.79207554513387,-78.79180066331494,-78.79216849606497,-78.7919901532476,-78.79291573895907,-78.79208391597578,-78.79218404309327,-78.7929202225082,-78.79273252368375,-78.79233880399667,-78.79205068039525,-78.79293435994423,-78.7925616134785,-78.79250620965847,-78.79217562568149,-78.79308719818364,-78.79304503620844,-78.79243628050023,-78.79288873508276,-78.79267451086785,-78.79256314806301,-78.79236601097568,-78.79337348334339,-78.79185815389836,-78.79196844778461,-78.79328390553016,-78.79321773724322,-78.79261722649669,-78.79244435244844,-78.79217553703172,-78.79291363683735,-78.79294755376814,-78.79189019048152,-78.79253674780237,-78.79230543733519,-78.79343725708951,-78.79258805002596,-78.79288279452852,-78.7932357193669,-78.79284558799522,-78.79163107179491,-78.79305267758257,-78.7930143605702,-78.79188613129429,-78.79270252924883,-78.79238159970232,-78.79291401876714,-78.7927720287087,-78.79357023193761,-78.79262700586152,-78.79337228233406,-78.79223303092205,-78.79341696355574,-78.79276903761031,-78.79188399446339,-78.79172628548035,-78.7924486633888,-78.7926383672531,-78.79235438770229,-78.791678058378,-78.79254712434853,-78.7928903944307,-78.7919865987358,-78.79185426317464,-78.79214157358503,-78.79353836195212,-78.79228578412581,-78.79277766456187,-78.79267565731735,-78.7923787345118,-78.79298035370691,-78.79203106532053,-78.79311849880985,-78.79265310185541,-78.79191914802254,-78.79333220911188,-78.79220701351554,-78.7929657862597,-78.79272482211181,-78.79234379109373,-78.79169146903645,-78.79251393023617,-78.79221670933849,-78.79292503341755,-78.79231350437327,-78.79297936836915,-78.79215195069682,-78.79211666684276,-78.79251811544816,-78.79234524209883,-78.79279769457068,-78.79241089656122,-78.79291601825162,-78.79227911628331,-78.79322895928854,-78.7925399844768,-78.79351409109054,-78.79281571858262,-78.79295608421306,-78.79287171913678,-78.79268479189294,-78.79259380596086,-78.79302062813208,-78.79327649963265,-78.7928044826033,-78.79242815088175,-78.79337196902276,-78.79325095264116,-78.79265651110596,-78.79354321858314,-78.79288811913052,-78.79312938114742,-78.79270230254893,-78.79340041682501,-78.79401967812829,-78.79406739203172,-78.79342664377779,-78.79358601861514,-78.79265714997616,-78.79334919800637,-78.79294582698277,-78.79279473912942,-78.79305915335549,-78.79273215952101,-78.79311212091075,-78.79342617165192,-78.79288025620298,-78.79333988415799,-78.79303659778654,-78.79323433071043,-78.79297047175899,-78.79346290594972,-78.79289909205261,-78.79317593594455,-78.79347371168468,-78.79340369898723,-78.79316111170286,-78.79363039320677,-78.79331002023225,-78.79349861283231,-78.79323035386875,-78.79319370277162,-78.79344654050738,-78.79342231916539,-78.793358629129,-78.79349925106385,-78.79331424667309,-78.79327900439583,-78.79580194856253],2,null,null,{"interactive":true,"className":"","stroke":true,"color":["#B8585F","#B8585F","#E41A1C","#B8585F","#E41A1C","#B8585F","#B8585F","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#E41A1C","#E41A1C","#53A16D","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#E41A1C","#4C8C9B","#E41A1C","#E41A1C","#53A16D","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#E41A1C","#4C8C9B","#4C8C9B","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#4C8C9B","#4C8C9B","#4C8C9B","#62A359","#4C8C9B","#4C8C9B","#E41A1C","#62A359","#4C8C9B","#4C8C9B","#62A359","#4C8C9B","#62A359","#4C8C9B","#E41A1C","#62A359","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#4C8C9B","#867D80","#4C8C9B","#4C8C9B","#867D80","#E41A1C","#E41A1C","#4C8C9B","#867D80","#867D80","#867D80","#4C8C9B","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#867D80","#984EA3","#984EA3","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#867D80","#984EA3","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#984EA3","#867D80","#984EA3","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#E41A1C","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["#B8585F","#B8585F","#E41A1C","#B8585F","#E41A1C","#B8585F","#B8585F","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#E41A1C","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#6F76A1","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#E41A1C","#E41A1C","#53A16D","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#E41A1C","#4C8C9B","#E41A1C","#E41A1C","#53A16D","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#E41A1C","#4C8C9B","#4C8C9B","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#53A16D","#4C8C9B","#4C8C9B","#4C8C9B","#4C8C9B","#4C8C9B","#62A359","#4C8C9B","#4C8C9B","#E41A1C","#62A359","#4C8C9B","#4C8C9B","#62A359","#4C8C9B","#62A359","#4C8C9B","#E41A1C","#62A359","#4C8C9B","#4C8C9B","#E41A1C","#4C8C9B","#4C8C9B","#867D80","#4C8C9B","#4C8C9B","#867D80","#E41A1C","#E41A1C","#4C8C9B","#867D80","#867D80","#867D80","#4C8C9B","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#867D80","#984EA3","#984EA3","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#867D80","#984EA3","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#984EA3","#867D80","#984EA3","#867D80","#984EA3","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C","#E41A1C","#867D80","#E41A1C","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#867D80","#E41A1C"],"fillOpacity":0.2},null,null,["ID: 430 <br> Height: 209.875","ID: 433 <br> Height: 209.765","ID: 446 <br> Height: 209.863","ID: 501 <br> Height: 211.537","ID: 505 <br> Height: 208.953","ID: 551 <br> Height: 209.869","ID: 561 <br> Height: 209.444","ID: 584 <br> Height: 209.182","ID: 585 <br> Height: 210.69","ID: 590 <br> Height: 209.205","ID: 657 <br> Height: 209.552","ID: 690 <br> Height: 209.197","ID: 724 <br> Height: 209.679","ID: 737 <br> Height: 208.976","ID: 760 <br> Height: 209.834","ID: 784 <br> Height: 209.026","ID: 791 <br> Height: 209.304","ID: 803 <br> Height: 209.937","ID: 823 <br> Height: 211.275","ID: 838 <br> Height: 212.308","ID: 844 <br> Height: 210.599","ID: 890 <br> Height: 209.75","ID: 1138 <br> Height: 209.278","ID: 1172 <br> Height: 211.813","ID: 1201 <br> Height: 209.745","ID: 1209 <br> Height: 211.019","ID: 1212 <br> Height: 210.974","ID: 1221 <br> Height: 210.95","ID: 1228 <br> Height: 210.963","ID: 1235 <br> Height: 211.4","ID: 1264 <br> Height: 209.97","ID: 1277 <br> Height: 211.08","ID: 1281 <br> Height: 209.604","ID: 1289 <br> Height: 209.028","ID: 1295 <br> Height: 209.463","ID: 1310 <br> Height: 210.12","ID: 1320 <br> Height: 209.034","ID: 1339 <br> Height: 209.343","ID: 1359 <br> Height: 209.822","ID: 1362 <br> Height: 211.028","ID: 1366 <br> Height: 209.106","ID: 1372 <br> Height: 211.938","ID: 1373 <br> Height: 209.159","ID: 1377 <br> Height: 209.819","ID: 1378 <br> Height: 209.554","ID: 1379 <br> Height: 209.363","ID: 1381 <br> Height: 208.948","ID: 1390 <br> Height: 213.051","ID: 1391 <br> Height: 210.915","ID: 1393 <br> Height: 209.574","ID: 1394 <br> Height: 211.181","ID: 1398 <br> Height: 209.421","ID: 1401 <br> Height: 211.295","ID: 1406 <br> Height: 212.885","ID: 1407 <br> Height: 209.724","ID: 1414 <br> Height: 209.344","ID: 1417 <br> Height: 211.013","ID: 1419 <br> Height: 209.74","ID: 1420 <br> Height: 212.051","ID: 1423 <br> Height: 211.066","ID: 1424 <br> Height: 210.33","ID: 1425 <br> Height: 212.058","ID: 1429 <br> Height: 212.656","ID: 1430 <br> Height: 212.134","ID: 1433 <br> Height: 209.013","ID: 1444 <br> Height: 209.714","ID: 1449 <br> Height: 209.015","ID: 1450 <br> Height: 209.948","ID: 1457 <br> Height: 209.223","ID: 1462 <br> Height: 211.466","ID: 1464 <br> Height: 210.842","ID: 1470 <br> Height: 209.319","ID: 1479 <br> Height: 210.457","ID: 1486 <br> Height: 210.758","ID: 1494 <br> Height: 211.304","ID: 1508 <br> Height: 210.636","ID: 1512 <br> Height: 213.284","ID: 1513 <br> Height: 210.193","ID: 1524 <br> Height: 213.15","ID: 1529 <br> Height: 210.725","ID: 1530 <br> Height: 211.043","ID: 1534 <br> Height: 213.228","ID: 1543 <br> Height: 213.432","ID: 1547 <br> Height: 209.591","ID: 1548 <br> Height: 209.557","ID: 1555 <br> Height: 212.311","ID: 1556 <br> Height: 210.581","ID: 1557 <br> Height: 210.31","ID: 1570 <br> Height: 210.317","ID: 1580 <br> Height: 209.304","ID: 1582 <br> Height: 210.603","ID: 1593 <br> Height: 210.229","ID: 1597 <br> Height: 210.742","ID: 1598 <br> Height: 209.301","ID: 1606 <br> Height: 209.839","ID: 1609 <br> Height: 210.228","ID: 1633 <br> Height: 210.147","ID: 1637 <br> Height: 211.289","ID: 1646 <br> Height: 209.636","ID: 1666 <br> Height: 209.383","ID: 1667 <br> Height: 210.942","ID: 1672 <br> Height: 209.38","ID: 1692 <br> Height: 209.109","ID: 1700 <br> Height: 210.582","ID: 1721 <br> Height: 209.509","ID: 1724 <br> Height: 213.901","ID: 1725 <br> Height: 209.776","ID: 1727 <br> Height: 210.335","ID: 1737 <br> Height: 210.412","ID: 1744 <br> Height: 209.03","ID: 1745 <br> Height: 209.593","ID: 1763 <br> Height: 209.404","ID: 1773 <br> Height: 209.022","ID: 1785 <br> Height: 209.286","ID: 1788 <br> Height: 209.311","ID: 1791 <br> Height: 210.787","ID: 1807 <br> Height: 211.106","ID: 1808 <br> Height: 213.4","ID: 1809 <br> Height: 210.913","ID: 1810 <br> Height: 209.338","ID: 1813 <br> Height: 209.187","ID: 1825 <br> Height: 210.463","ID: 1828 <br> Height: 210.968","ID: 1829 <br> Height: 212.153","ID: 1830 <br> Height: 211.642","ID: 1834 <br> Height: 210.315","ID: 1836 <br> Height: 208.999","ID: 1837 <br> Height: 208.957","ID: 1840 <br> Height: 209.315","ID: 1842 <br> Height: 211.71","ID: 1852 <br> Height: 210.011","ID: 1854 <br> Height: 211.672","ID: 1855 <br> Height: 210.661","ID: 1856 <br> Height: 209.349","ID: 1858 <br> Height: 211.225","ID: 1865 <br> Height: 210.289","ID: 1868 <br> Height: 209.235","ID: 1871 <br> Height: 209.381","ID: 1873 <br> Height: 211.402","ID: 1874 <br> Height: 210.727","ID: 1876 <br> Height: 209.644","ID: 1879 <br> Height: 211.8","ID: 1884 <br> Height: 210.371","ID: 1886 <br> Height: 210.963","ID: 1889 <br> Height: 209.111","ID: 1890 <br> Height: 209.783","ID: 1896 <br> Height: 209.711","ID: 1899 <br> Height: 209.011","ID: 1902 <br> Height: 209.361","ID: 1906 <br> Height: 210.985","ID: 1909 <br> Height: 209.989","ID: 1910 <br> Height: 208.968","ID: 1911 <br> Height: 210.434","ID: 1915 <br> Height: 210.782","ID: 1919 <br> Height: 211.854","ID: 1920 <br> Height: 208.936","ID: 1924 <br> Height: 210.457","ID: 1926 <br> Height: 209.275","ID: 1927 <br> Height: 211.958","ID: 1931 <br> Height: 210.173","ID: 1935 <br> Height: 213.319","ID: 1942 <br> Height: 209.92","ID: 1943 <br> Height: 211.483","ID: 1944 <br> Height: 209.565","ID: 1945 <br> Height: 212.055","ID: 1952 <br> Height: 212.877","ID: 1955 <br> Height: 209.697","ID: 1956 <br> Height: 212.067","ID: 1960 <br> Height: 209.066","ID: 1965 <br> Height: 211.979","ID: 1966 <br> Height: 211.879","ID: 1973 <br> Height: 209.24","ID: 1974 <br> Height: 213.895","ID: 1976 <br> Height: 209.768","ID: 1980 <br> Height: 211.474","ID: 1983 <br> Height: 211.936","ID: 1988 <br> Height: 210.229","ID: 1990 <br> Height: 212.624","ID: 1991 <br> Height: 211.916","ID: 1995 <br> Height: 210.93","ID: 2001 <br> Height: 211.792","ID: 2004 <br> Height: 210.492","ID: 2005 <br> Height: 211.426","ID: 2006 <br> Height: 212.574","ID: 2013 <br> Height: 212.75","ID: 2014 <br> Height: 213.088","ID: 2015 <br> Height: 210.535","ID: 2030 <br> Height: 212.684","ID: 2034 <br> Height: 210.88","ID: 2035 <br> Height: 210.494","ID: 2038 <br> Height: 210.217","ID: 2049 <br> Height: 212.826","ID: 2051 <br> Height: 209.374","ID: 2060 <br> Height: 209.363","ID: 2066 <br> Height: 213.833","ID: 2069 <br> Height: 210.833","ID: 2071 <br> Height: 209.948","ID: 2072 <br> Height: 212.719","ID: 2080 <br> Height: 213.337","ID: 2082 <br> Height: 209.448","ID: 2087 <br> Height: 210.441","ID: 2092 <br> Height: 209.808","ID: 2111 <br> Height: 209.169","ID: 2119 <br> Height: 209.392","ID: 2120 <br> Height: 209.104","ID: 2126 <br> Height: 209.159","ID: 2127 <br> Height: 209.751","ID: 2130 <br> Height: 210.99","ID: 2132 <br> Height: 209.383","ID: 2135 <br> Height: 209.236","ID: 2136 <br> Height: 209.358","ID: 2142 <br> Height: 209.078","ID: 2147 <br> Height: 209.025","ID: 2152 <br> Height: 208.91","ID: 2164 <br> Height: 209.184","ID: 2166 <br> Height: 209.53","ID: 2167 <br> Height: 209.706","ID: 2169 <br> Height: 209.374","ID: 2171 <br> Height: 208.962","ID: 2175 <br> Height: 209.027","ID: 2182 <br> Height: 209.23","ID: 2187 <br> Height: 209.318","ID: 2188 <br> Height: 209.338","ID: 2193 <br> Height: 210.146","ID: 2194 <br> Height: 209.235","ID: 2215 <br> Height: 209.895","ID: 2216 <br> Height: 209.277","ID: 2220 <br> Height: 209.308","ID: 2231 <br> Height: 209.192","ID: 2237 <br> Height: 211.32","ID: 2239 <br> Height: 209.38","ID: 2245 <br> Height: 209.73","ID: 2261 <br> Height: 212.003","ID: 2265 <br> Height: 211.509","ID: 2270 <br> Height: 211.857","ID: 2272 <br> Height: 209.981","ID: 2278 <br> Height: 211.784","ID: 2287 <br> Height: 212.06","ID: 2291 <br> Height: 209.026","ID: 2308 <br> Height: 210.144","ID: 2309 <br> Height: 211.076","ID: 2311 <br> Height: 209.868","ID: 2312 <br> Height: 209.335","ID: 2330 <br> Height: 209.921","ID: 2622 <br> Height: 209.295"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[43.00537781453023,43.00808029477482],"lng":[-78.79580194856253,-78.78924470573267]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 <p>Load any required packages in a code chunk (you may need to install some packages):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"sf"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"terra"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"lidR"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"raster"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"dbscan"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"leaflet"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"RColorBrewer"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"knitr"</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"rgl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="conclusions" class="level1">
-<h1>Conclusions</h1>
+<section id="conclusionsn" class="level1">
+<h1>Conclusionsn</h1>
 <p>[~200 words]</p>
 <p>Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.</p>
 </section>
