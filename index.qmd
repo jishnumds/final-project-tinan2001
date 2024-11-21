@@ -37,6 +37,8 @@ library("RColorBrewer")
 ```
 ```{r output = FALSE, echo = FALSE}
 knitr::opts_knit$set(global.device = TRUE)
+library(rgl)
+setupKnitr(autoprint = TRUE)
 ```
 
 ## Load USGS  Lidar Point Cloud Data of Letchworth Learning Forest
@@ -72,6 +74,7 @@ st_crs(polygon_sf) == st_crs(las)
 ## Filter out any OUTliers z-values from las
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 
+rglwidget(x = scene3d(filterOUT_las))
 ```
 
 ##Check If New Data Will Correctly Transform to Leaflet Projection
@@ -178,7 +181,7 @@ Load any required packages in a code chunk (you may need to install some package
 # Conclusionsn
 
 \[\~200 words\]
-
+apa format
 Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
 
 # References
