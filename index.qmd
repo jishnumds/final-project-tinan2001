@@ -24,6 +24,7 @@ The main r packages that were utilized were lidR, terra, and raster.
 
 Here's my current on-going code.
 
+## Load Nessassary Packages
 ```{r Load packages, echo = TRUE, output = FALSE, results = FALSE}
 library("sf")
 library("terra")
@@ -34,17 +35,20 @@ library("tidyverse")
 library("leaflet")
 library("RColorBrewer")
 ```
-
-
-```{r Read LiDAR data }
-las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
-#st_crs(las)
-## Look at the parameter coordinates of original data
-original_bbox <- st_bbox(las)
-
-# plot3d(las$X, las$Y, las$Z, col = rainbow(1000))
+```{r output = FALSE, echo = FALSE}
+knitr::opts_knit$set(global.device = TRUE)
 ```
 
+## Load USGS  Lidar Point Cloud Data of Letchworth Learning Forest
+```{r Read LiDAR data }
+las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
+
+## Look at the parameter coordinates of original data
+original_bbox <- st_bbox(las)
+original_bbox
+```
+
+## Create New Bounding Box Filter Out Non-Forest
 ```{r Create a new bounding box that only includes the forest area, echo = TRUE, results = 'hide'}
 polygon_coords <- matrix(c(
   1388000, 2349355, #right bottom corner
@@ -58,29 +62,25 @@ polygon_coords <- matrix(c(
 
 ## Bounding Box has been given CRS associated with las-CRS 
 polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
-plot(polygon_sf)
 ```
-
 ```{r Crop orinigal data by bounding box and filter out vertical outliers)}
 las_clipped <- lidR::clip_roi(las, polygon_sf)
+
 ## Check if the crs is still the same
 st_crs(polygon_sf) == st_crs(las)
 
 ## Filter out any OUTliers z-values from las
-#filterOUT_las <- filter_poi(las_clipped, Z >= 182, Z <= 220)
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
-
-# rglwidget(plot(filterOUT_las))
-# plot3d(filterOUT_las$X, filterOUT_las$Y, filterOUT_las$Z)
 
 ```
 
+##Check If New Data Will Correctly Transform to Leaflet Projection
+###The original data uses NAD 83 (2011) and Leaflet uses WGS 84
 ```{r Test to see if the clipped data will correctly change to leaflet crs}
 ## Reproject the las to 4326 for Leaflet
+options(digits = 15)
 las84 <- st_as_sf(las_clipped, coords = c("X", "Y"), crs = 26918) # crs was NAD83(2011)
 las84 <- st_transform(las_clipped, crs = 4326)
-
-options(digits = 15)
 
 
 ## Create a dataframe of points lat and long to check if st_transform worked  
@@ -90,8 +90,10 @@ las_df <- data.frame(lat = st_coordinates(las84)[, 2],
 unique(las_df$lat)
 unique(las_df$long)
 ```
+##Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees).
 
-```{r Rasterize data, and find the 90% trees, results = 'hide'}
+### Height is in Meters
+```{r Rasterize data, and find the 90 percent trees, results = 'hide'}
 ## LidR functions to find individual trees
 chm <- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))
 
@@ -108,7 +110,7 @@ tall_trees <- filtered_tree_tops[filtered_tree_tops$Z > nintypercent,]
 
 coords <- st_coordinates(tall_trees)
 ```
-
+## The Tree Height Distribution within the Forest
 ```{r making a histogram of height distribution}
 tree_Z <- as.data.frame(filtered_tree_tops$Z)
 colnames(tree_Z) <- c("height")
@@ -121,21 +123,29 @@ ggplot(data = test, aes(x = test)) +
 geom_histogram(binwidth = 0.2,fill="black")+
 labs(title = "Distrubtion of Tree Hieghts", x = "Hieght (m)", y = "Tree Count" )
 ```
-
+## Location of the Tallest Trees,and Tree Tops within the Forest
 ```{r echo = FALSE}
-plot(chm, main = "chm")
-plot(filtered_tree_tops[2],pch = 16, cex = .5, main = "tree_tops")
-plot(tall_trees, pch = 16, cex = .5, main = "tall_trees" )
+plot(chm, main = "Tree Tops")
+plot(filtered_tree_tops[2],pch = 16, cex = .5, main = "tree_tops", add = TRUE)
+plot(chm, main = "Tall Trees")
+plot(tall_trees, pch = 16, cex = .5, main = "tall_trees", add = TRUE)
 ```
-
+## Locate Spatial Clustering of Tall Trees
 ```{r Findind spatial clustering}
 dbscan_result <- dbscan(coords, eps = 12, minPts = 5)  
 tall_trees$dbscan_cluster <- as.factor(dbscan_result$cluster)
-unique (tall_trees$dbscan_cluster)
-plot(tall_trees[3], pch = 16, cex = .5)
+colorsize = length (unique (tall_trees$dbscan_cluster))
+plot(tall_trees)
+plot(tall_trees[3], pch = 16, cex = .5, col = factor(tall_trees$dbscan_cluster))
+
+## Filter out first cluster
+cluster <- tall_trees %>%
+filter(dbscan_cluster != 0)
+plot(chm)
+plot(cluster[3], pch = 16, cex = .5, col = factor(cluster$dbscan_cluster), main = "Tree Clusters", add = TRUE)
 
 ```
-
+##Add Locations of Spatail Clustering to Leaflet Map 
 ```{r Project onto leaflet map}
 pal <- colorFactor(brewer.pal(4, "Set1"), domain = tall_trees$dbscan_cluster)
 
