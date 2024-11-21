@@ -35,9 +35,6 @@ library("leaflet")
 library("RColorBrewer")
 ```
 
-```{r include = FALSE, output = FALSE}
-# knitr::knit_hooks$set(webgl = hook_webgl)
-```
 
 ```{r Read LiDAR data }
 las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
