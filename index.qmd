@@ -33,23 +33,16 @@ library("dbscan")
 library("tidyverse")
 library("leaflet")
 library("RColorBrewer")
-library("here")
 ```
 
 
 ```{r Read LiDAR data }
-setwd(here::here())
 las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
 #st_crs(las)
 ## Look at the parameter coordinates of original data
 original_bbox <- st_bbox(las)
 
 # plot3d(las$X, las$Y, las$Z, col = rainbow(1000))
-```
-
-```{r include = FALSE}
-# knitr::opts_chunk$set(echo = TRUE)
-# rgl::setupKnitr()
 ```
 
 ```{r Create a new bounding box that only includes the forest area, echo = TRUE, results = 'hide'}
@@ -170,7 +163,6 @@ Load any required packages in a code chunk (you may need to install some package
  install.packages("RColorBrewer")
  install.packages("knitr")
  install.packages("rgl")
- install.packages("here")
 ```
 
 # Conclusionsn
