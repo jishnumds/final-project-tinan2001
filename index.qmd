@@ -37,6 +37,7 @@ library("RColorBrewer")
 
 
 ```{r Read LiDAR data }
+options(rgl.useNULL = TRUE)
 las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
 #st_crs(las)
 ## Look at the parameter coordinates of original data
