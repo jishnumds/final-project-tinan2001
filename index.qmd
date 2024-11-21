@@ -24,10 +24,6 @@ The main r packages that were utilized were lidR, terra, and raster.
 
 Here's my current on-going code.
 
-```{r Set working directory, inlude = FALSE}
-
-```
-
 ```{r Load packages, echo = TRUE, output = FALSE, results = FALSE}
 library("sf")
 library("terra")
