@@ -37,8 +37,6 @@ library("dbscan")
 library("tidyverse")
 library("leaflet")
 library("RColorBrewer")
-library("knitr")
-library("rgl")
 ```
 
 ```{r include = FALSE, output = FALSE}
