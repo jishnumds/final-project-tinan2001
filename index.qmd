@@ -36,6 +36,7 @@ library("leaflet")
 library("RColorBrewer")
 ```
 ```{r output = FALSE, echo = FALSE}
+rgl.useNULL=TRUE
 knitr::opts_knit$set(global.device = TRUE)
 library(rgl)
 setupKnitr(autoprint = TRUE)
@@ -74,7 +75,7 @@ st_crs(polygon_sf) == st_crs(las)
 ## Filter out any OUTliers z-values from las
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 
-rglwidget(x = scene3d(filterOUT_las))
+# rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)
 ```
 
 ##Check If New Data Will Correctly Transform to Leaflet Projection
