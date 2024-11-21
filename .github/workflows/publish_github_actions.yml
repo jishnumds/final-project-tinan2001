@@ -23,7 +23,7 @@ jobs:
         run: |-
           sudo apt update
           sudo apt install libudunits2-dev libgdal-dev libgeos-dev libproj-dev libfontconfig1-dev
-
+          sudo apt-get install libcgal-dev libglu1-mesa-dev libglu1-mesa-dev #for RGL
       - name: Install R
         uses: r-lib/actions/setup-r@v2
 
