@@ -25,7 +25,7 @@ The main r packages that were utilized were lidR, terra, and raster.
 Here's my current on-going code.
 
 ```{r Set working directory, inlude = FALSE}
-setwd("C:/Users/tinan/OneDrive/Documents/Daily/UB 2024 Fall/GEO 551 Spatial Data Science/final-project-tinan2001")
+
 ```
 
 ```{r Load packages, echo = TRUE, output = FALSE, results = FALSE}
