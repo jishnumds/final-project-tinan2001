@@ -1,7 +1,7 @@
 ---
-title: "Tree Top Clustering at Letchworth Learning Forest"
+title: "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data"
 author: "Tina Ni"
-subtitle: "Utilizing Lidar Point Cloud Data to Map Out Forest Tree Top Clustering"
+subtitle: "Understanding forest structure and characteristics in Letchworth Learning Forest"
 date: today
 date-format: long
 ---
@@ -10,15 +10,15 @@ date-format: long
 
 \[\~ 200 words\]
 
-Observing forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve due to resource restrictions. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely.
+Observing forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve long scale due to resource limitations. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely. 
 
 # Materials and methods
 
 \[\~ 200 words\]
 
-In this project, I utilized 2019 remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex.  By looking at vertical structure, I was able to find spatial clustering of the tallest (90%) woody individuals.
+In this project, I utilized 2019 remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicot Complex. By looking at vertical structure, I was able to find forest characteristics such as spatial clustering of the tallest (90%) woody individuals, approximately how many trees are residing in the study area, and tree height distributions.
 
-These clusters were then projected onto the latest leaflet map, to see if the forest parameter has been altered following the remote sensing date.
+The spatial data was mapped with Leaflet and distributions were visualized using ggplot
 
 The main r packages that were utilized were lidR, terra, and raster.
 
@@ -34,12 +34,12 @@ library("dbscan")
 library("tidyverse")
 library("leaflet")
 library("RColorBrewer")
+library("rgl")
 ```
 ```{r output = FALSE, echo = FALSE}
 rgl.useNULL=TRUE
-knitr::opts_knit$set(global.device = TRUE)
-library(rgl)
-setupKnitr(autoprint = TRUE)
+
+knitr::opts_knit$set(global.device = FALSE)
 ```
 
 ## Load USGS  Lidar Point Cloud Data of Letchworth Learning Forest
@@ -66,7 +66,7 @@ polygon_coords <- matrix(c(
 ## Bounding Box has been given CRS associated with las-CRS 
 polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
 ```
-```{r Crop orinigal data by bounding box and filter out vertical outliers)}
+```{r Crop orinigal data by bounding box and filter out vertical outliers, echo = TRUE, output = FALSE, results = FALSE}
 las_clipped <- lidR::clip_roi(las, polygon_sf)
 
 ## Check if the crs is still the same
@@ -78,8 +78,7 @@ filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 # rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)
 ```
 
-##Check If New Data Will Correctly Transform to Leaflet Projection
-###The original data uses NAD 83 (2011) and Leaflet uses WGS 84
+## Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)
 ```{r Test to see if the clipped data will correctly change to leaflet crs}
 ## Reproject the las to 4326 for Leaflet
 options(digits = 15)
@@ -94,9 +93,7 @@ las_df <- data.frame(lat = st_coordinates(las84)[, 2],
 unique(las_df$lat)
 unique(las_df$long)
 ```
-##Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees).
-
-### Height is in Meters
+## Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees) (Height is in Meters)
 ```{r Rasterize data, and find the 90 percent trees, results = 'hide'}
 ## LidR functions to find individual trees
 chm <- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))
@@ -122,25 +119,42 @@ test <- tree_Z$height - 180
 test <- as.data.frame(test)
 max(test)
 
+tall_trees_height <- as.data.frame(tall_trees$Z - 180)
+colnames(tall_trees_height) <- c("height")
 ## in meters
-ggplot(data = test, aes(x = test)) +
-geom_histogram(binwidth = 0.2,fill="black")+
-labs(title = "Distrubtion of Tree Hieghts", x = "Hieght (m)", y = "Tree Count" )
+ggplot()+
+geom_histogram(data = test, aes(x = test), binwidth = 0.5,, color = "black", fill="green", alpha = 0.25)+
+geom_histogram(data = tall_trees_height, aes(x = height), binwidth = 0.5,, color = "black", fill="red", alpha = .5)+
+geom_vline(aes(xintercept = mean(test$test)), color="blue", linetype="dashed", linewidth=1)+
+theme_classic()+
+labs(title = "Distribution of Tree Heights in Meters", x = "Height (m)", y = "Frequency",
+     subtitle = "Mean of all heights (Blue) \n90% of tallest trees (Red)",
+     caption = "Letchworth Teaching Forest (2019)")
 ```
-## Location of the Tallest Trees,and Tree Tops within the Forest
-```{r echo = FALSE}
+## Locate the Tallest Trees, and Tree Tops within the Forest
+
+```{r warning = FALSE}
+knitr::opts_chunk$set(global.device = TRUE)
+
 plot(chm, main = "Tree Tops")
 plot(filtered_tree_tops[2],pch = 16, cex = .5, main = "tree_tops", add = TRUE)
+
 plot(chm, main = "Tall Trees")
 plot(tall_trees, pch = 16, cex = .5, main = "tall_trees", add = TRUE)
+
 ```
+
+
 ## Locate Spatial Clustering of Tall Trees
+
 ```{r Findind spatial clustering}
-dbscan_result <- dbscan(coords, eps = 12, minPts = 5)  
+knitr::opts_chunk$set(global.device = TRUE)
+
+dbscan_result <- dbscan(coords, eps = 12, minPts = 5)
+
 tall_trees$dbscan_cluster <- as.factor(dbscan_result$cluster)
 colorsize = length (unique (tall_trees$dbscan_cluster))
-plot(tall_trees)
-plot(tall_trees[3], pch = 16, cex = .5, col = factor(tall_trees$dbscan_cluster))
+
 
 ## Filter out first cluster
 cluster <- tall_trees %>%
@@ -149,24 +163,28 @@ plot(chm)
 plot(cluster[3], pch = 16, cex = .5, col = factor(cluster$dbscan_cluster), main = "Tree Clusters", add = TRUE)
 
 ```
-##Add Locations of Spatail Clustering to Leaflet Map 
-```{r Project onto leaflet map}
+## Add Locations of Spatail Clustering to Leaflet Map 
+```{r Project onto leaflet map, echo = TRUE, output = FALSE, results = FALSE}
 pal <- colorFactor(brewer.pal(4, "Set1"), domain = tall_trees$dbscan_cluster)
 
 st_tall_trees <- st_transform(tall_trees, crs = 4326)
-leaflet (st_tall_trees) %>%
+st_tall_trees_filtered <- st_tall_trees %>%
+  filter(dbscan_cluster != 0)
+st_tall_trees_filtered$Z <- st_tall_trees_filtered$Z - 180
+
+leaflet (st_tall_trees_filtered) %>%
   setView(lng = -78.793, lat = 43.007, zoom = 13)  %>%
   addTiles() %>%
   addCircleMarkers(
     radius = 2,
     color = ~pal(dbscan_cluster),
-    popup = ~paste("ID:", treeID, "<br> Height:", Z))
+    popup = ~paste("Tree ID:", treeID, "<br> Height (m):", Z))
 
 ```
 
 Load any required packages in a code chunk (you may need to install some packages):
 
-```{r, message=F, warning=F, results = 'hide'}
+```{r, message=F, warning=F, echo = TRUE, output = FALSE, results = FALSE}
  install.packages("sf")
  install.packages("terra")
  install.packages("lidR")
@@ -179,7 +197,7 @@ Load any required packages in a code chunk (you may need to install some package
  install.packages("rgl")
 ```
 
-# Conclusionsn
+# Conclusions
 
 \[\~200 words\]
 apa format
