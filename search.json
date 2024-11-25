@@ -2,51 +2,72 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "",
-    "text": "[~ 200 words]\nObserving forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve due to resource restrictions. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely."
+    "text": "[~ 200 words]\nObserving forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve long scale due to resource limitations. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely."
   },
   {
     "objectID": "index.html#load-nessassary-packages",
     "href": "index.html#load-nessassary-packages",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "Load Nessassary Packages",
-    "text": "Load Nessassary Packages\n\nlibrary(\"sf\")\nlibrary(\"terra\")\nlibrary(\"lidR\")\nlibrary(\"raster\")\nlibrary(\"dbscan\")\nlibrary(\"tidyverse\")\nlibrary(\"leaflet\")\nlibrary(\"RColorBrewer\")"
+    "text": "Load Nessassary Packages\n\nlibrary(\"sf\")\nlibrary(\"terra\")\nlibrary(\"lidR\")\nlibrary(\"raster\")\nlibrary(\"dbscan\")\nlibrary(\"tidyverse\")\nlibrary(\"leaflet\")\nlibrary(\"RColorBrewer\")\nlibrary(\"rgl\")"
   },
   {
     "objectID": "index.html#load-usgs-lidar-point-cloud-data-of-letchworth-learning-forest",
     "href": "index.html#load-usgs-lidar-point-cloud-data-of-letchworth-learning-forest",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "Load USGS Lidar Point Cloud Data of Letchworth Learning Forest",
     "text": "Load USGS Lidar Point Cloud Data of Letchworth Learning Forest\n\nlas &lt;- readLAS(\"data/Letchworth_Teaching_Forest_Lidar.laz\")\n\n## Look at the parameter coordinates of original data\noriginal_bbox &lt;- st_bbox(las)\noriginal_bbox\n\n   xmin    ymin    xmax    ymax \n1387000 2349000 1388000 2350000"
   },
   {
     "objectID": "index.html#create-new-bounding-box-filter-out-non-forest",
     "href": "index.html#create-new-bounding-box-filter-out-non-forest",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "Create New Bounding Box Filter Out Non-Forest",
-    "text": "Create New Bounding Box Filter Out Non-Forest\n\npolygon_coords &lt;- matrix(c(\n  1388000, 2349355, #right bottom corner\n  1388000, 2349700, #right top corner\n  1387450, 2349700, #mid top corner\n  1387450, 2349450, #mid mid corner\n  1387300, 2349200, #left bottom corner\n  1387350, 2349200, #mid bottom corner\n  1388000, 2349355  #right bottom corner\n), ncol = 2, byrow = TRUE)\n\n## Bounding Box has been given CRS associated with las-CRS \npolygon_sf &lt;- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))\n\n\nlas_clipped &lt;- lidR::clip_roi(las, polygon_sf)\n\n## Check if the crs is still the same\nst_crs(polygon_sf) == st_crs(las)\n\n[1] TRUE\n\n## Filter out any OUTliers z-values from las\nfilterOUT_las &lt;- filter_poi(las_clipped, Z &gt;= 180, Z &lt;= 220)\n\n# rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)\n\n##Check If New Data Will Correctly Transform to Leaflet Projection ###The original data uses NAD 83 (2011) and Leaflet uses WGS 84\n\n## Reproject the las to 4326 for Leaflet\noptions(digits = 15)\nlas84 &lt;- st_as_sf(las_clipped, coords = c(\"X\", \"Y\"), crs = 26918) # crs was NAD83(2011)\nlas84 &lt;- st_transform(las_clipped, crs = 4326)\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: vgridshift: could not find required grid(s).\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift\n(File not found or invalid)\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: vgridshift: could not find required grid(s).\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift\n(File not found or invalid)\n\n## Create a dataframe of points lat and long to check if st_transform worked  \nlas_df &lt;- data.frame(lat = st_coordinates(las84)[, 2],\n                     long = st_coordinates(las84)[, 1])\n\nunique(las_df$lat)\n\n[1] 43.005 43.006 43.007 43.009 43.008\n\nunique(las_df$long)\n\n [1] -78.797 -78.796 -78.795 -78.794 -78.793 -78.792 -78.791 -78.790 -78.789\n[10] -78.788 -78.787\n\n\n##Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees).\n\nHeight is in Meters\n\n## LidR functions to find individual trees\nchm &lt;- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))\n\ntree_tops &lt;- locate_trees(chm, lmf (ws=5))\nfiltered_tree_tops &lt;- tree_tops %&gt;%\nfilter(Z &gt;= 185)\n\n#plot(chm, col = height.colors(50))\n#plot(sf::st_geometry(filtered_tree_tops), pch = 3)\n#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)\n\nnintypercent &lt;- quantile(filtered_tree_tops$Z, 0.90)\ntall_trees &lt;- filtered_tree_tops[filtered_tree_tops$Z &gt; nintypercent,]\n\ncoords &lt;- st_coordinates(tall_trees)"
+    "text": "Create New Bounding Box Filter Out Non-Forest\n\npolygon_coords &lt;- matrix(c(\n  1388000, 2349355, #right bottom corner\n  1388000, 2349700, #right top corner\n  1387450, 2349700, #mid top corner\n  1387450, 2349450, #mid mid corner\n  1387300, 2349200, #left bottom corner\n  1387350, 2349200, #mid bottom corner\n  1388000, 2349355  #right bottom corner\n), ncol = 2, byrow = TRUE)\n\n## Bounding Box has been given CRS associated with las-CRS \npolygon_sf &lt;- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))\n\n\nlas_clipped &lt;- lidR::clip_roi(las, polygon_sf)\n\n## Check if the crs is still the same\nst_crs(polygon_sf) == st_crs(las)\n\n## Filter out any OUTliers z-values from las\nfilterOUT_las &lt;- filter_poi(las_clipped, Z &gt;= 180, Z &lt;= 220)\n\n# rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)"
+  },
+  {
+    "objectID": "index.html#check-if-new-data-will-correctly-transform-to-leaflet-projection-the-original-data-uses-nad-83-2011-and-leaflet-uses-wgs-84",
+    "href": "index.html#check-if-new-data-will-correctly-transform-to-leaflet-projection-the-original-data-uses-nad-83-2011-and-leaflet-uses-wgs-84",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
+    "section": "Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)",
+    "text": "Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)\n\n## Reproject the las to 4326 for Leaflet\noptions(digits = 15)\nlas84 &lt;- st_as_sf(las_clipped, coords = c(\"X\", \"Y\"), crs = 26918) # crs was NAD83(2011)\nlas84 &lt;- st_transform(las_clipped, crs = 4326)\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: vgridshift: could not find required grid(s).\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift\n(File not found or invalid)\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: vgridshift: could not find required grid(s).\n\n\nWarning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :\nGDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift\n(File not found or invalid)\n\n## Create a dataframe of points lat and long to check if st_transform worked  \nlas_df &lt;- data.frame(lat = st_coordinates(las84)[, 2],\n                     long = st_coordinates(las84)[, 1])\n\nunique(las_df$lat)\n\n[1] 43.005 43.006 43.007 43.009 43.008\n\nunique(las_df$long)\n\n [1] -78.797 -78.796 -78.795 -78.794 -78.793 -78.792 -78.791 -78.790 -78.789\n[10] -78.788 -78.787"
+  },
+  {
+    "objectID": "index.html#rasterize-lidar-data-to-identify-tree-tops-identify-the-tree-population-create-a-data-set-of-the-90th-percentile-of-trees-based-on-height-tallest-trees-height-is-in-meters",
+    "href": "index.html#rasterize-lidar-data-to-identify-tree-tops-identify-the-tree-population-create-a-data-set-of-the-90th-percentile-of-trees-based-on-height-tallest-trees-height-is-in-meters",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
+    "section": "Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees) (Height is in Meters)",
+    "text": "Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees) (Height is in Meters)\n\n## LidR functions to find individual trees\nchm &lt;- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))\n\ntree_tops &lt;- locate_trees(chm, lmf (ws=5))\nfiltered_tree_tops &lt;- tree_tops %&gt;%\nfilter(Z &gt;= 185)\n\n#plot(chm, col = height.colors(50))\n#plot(sf::st_geometry(filtered_tree_tops), pch = 3)\n#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)\n\nnintypercent &lt;- quantile(filtered_tree_tops$Z, 0.90)\ntall_trees &lt;- filtered_tree_tops[filtered_tree_tops$Z &gt; nintypercent,]\n\ncoords &lt;- st_coordinates(tall_trees)"
   },
   {
     "objectID": "index.html#the-tree-height-distribution-within-the-forest",
     "href": "index.html#the-tree-height-distribution-within-the-forest",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "The Tree Height Distribution within the Forest",
-    "text": "The Tree Height Distribution within the Forest\n\ntree_Z &lt;- as.data.frame(filtered_tree_tops$Z)\ncolnames(tree_Z) &lt;- c(\"height\")\ntest &lt;- tree_Z$height - 180\ntest &lt;- as.data.frame(test)\nmax(test)\n\n[1] 33.901\n\n## in meters\nggplot(data = test, aes(x = test)) +\ngeom_histogram(binwidth = 0.2,fill=\"black\")+\nlabs(title = \"Distrubtion of Tree Hieghts\", x = \"Hieght (m)\", y = \"Tree Count\" )"
+    "text": "The Tree Height Distribution within the Forest\n\ntree_Z &lt;- as.data.frame(filtered_tree_tops$Z)\ncolnames(tree_Z) &lt;- c(\"height\")\ntest &lt;- tree_Z$height - 180\ntest &lt;- as.data.frame(test)\nmax(test)\n\n[1] 33.901\n\ntall_trees_height &lt;- as.data.frame(tall_trees$Z - 180)\ncolnames(tall_trees_height) &lt;- c(\"height\")\n## in meters\nggplot()+\ngeom_histogram(data = test, aes(x = test), binwidth = 0.5,, color = \"black\", fill=\"green\", alpha = 0.25)+\ngeom_histogram(data = tall_trees_height, aes(x = height), binwidth = 0.5,, color = \"black\", fill=\"red\", alpha = .5)+\ngeom_vline(aes(xintercept = mean(test$test)), color=\"blue\", linetype=\"dashed\", linewidth=1)+\ntheme_classic()+\nlabs(title = \"Distribution of Tree Heights in Meters\", x = \"Height (m)\", y = \"Frequency\",\n     subtitle = \"Mean of all heights (Blue) \\n90% of tallest trees (Red)\",\n     caption = \"Letchworth Teaching Forest (2019)\")"
   },
   {
-    "objectID": "index.html#location-of-the-tallest-treesand-tree-tops-within-the-forest",
-    "href": "index.html#location-of-the-tallest-treesand-tree-tops-within-the-forest",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
-    "section": "Location of the Tallest Trees,and Tree Tops within the Forest",
-    "text": "Location of the Tallest Trees,and Tree Tops within the Forest\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWarning in plot.sf(tall_trees, pch = 16, cex = 0.5, main = \"tall_trees\", :\nignoring all but the first attribute"
+    "objectID": "index.html#locate-the-tallest-trees-and-tree-tops-within-the-forest",
+    "href": "index.html#locate-the-tallest-trees-and-tree-tops-within-the-forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
+    "section": "Locate the Tallest Trees, and Tree Tops within the Forest",
+    "text": "Locate the Tallest Trees, and Tree Tops within the Forest\n\nknitr::opts_chunk$set(global.device = TRUE)\n\nplot(chm, main = \"Tree Tops\")\nplot(filtered_tree_tops[2],pch = 16, cex = .5, main = \"tree_tops\", add = TRUE)\n\n\n\n\n\n\n\nplot(chm, main = \"Tall Trees\")\nplot(tall_trees, pch = 16, cex = .5, main = \"tall_trees\", add = TRUE)"
   },
   {
     "objectID": "index.html#locate-spatial-clustering-of-tall-trees",
     "href": "index.html#locate-spatial-clustering-of-tall-trees",
-    "title": "Tree Top Clustering at Letchworth Learning Forest",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
     "section": "Locate Spatial Clustering of Tall Trees",
-    "text": "Locate Spatial Clustering of Tall Trees\n\ndbscan_result &lt;- dbscan(coords, eps = 12, minPts = 5)  \n\n\n\n\n\n\n\ntall_trees$dbscan_cluster &lt;- as.factor(dbscan_result$cluster)\ncolorsize = length (unique (tall_trees$dbscan_cluster))\nplot(tall_trees)\n\n\n\n\n\n\n\nplot(tall_trees[3], pch = 16, cex = .5, col = factor(tall_trees$dbscan_cluster))\n\n\n\n\n\n\n\n## Filter out first cluster\ncluster &lt;- tall_trees %&gt;%\nfilter(dbscan_cluster != 0)\nplot(chm)\nplot(cluster[3], pch = 16, cex = .5, col = factor(cluster$dbscan_cluster), main = \"Tree Clusters\", add = TRUE)\n\n\n\n\n\n\n\n\n##Add Locations of Spatail Clustering to Leaflet Map\n\npal &lt;- colorFactor(brewer.pal(4, \"Set1\"), domain = tall_trees$dbscan_cluster)\n\n\n\n\n\n\n\nst_tall_trees &lt;- st_transform(tall_trees, crs = 4326)\nleaflet (st_tall_trees) %&gt;%\n  setView(lng = -78.793, lat = 43.007, zoom = 13)  %&gt;%\n  addTiles() %&gt;%\n  addCircleMarkers(\n    radius = 2,\n    color = ~pal(dbscan_cluster),\n    popup = ~paste(\"ID:\", treeID, \"&lt;br&gt; Height:\", Z))\n\n\n\n\n\nLoad any required packages in a code chunk (you may need to install some packages):\n\n install.packages(\"sf\")\n\n\n\n\n\n\n\n install.packages(\"terra\")\n install.packages(\"lidR\")\n install.packages(\"raster\")\n install.packages(\"dbscan\")\n install.packages(\"tidyverse\")\n install.packages(\"leaflet\")\n install.packages(\"RColorBrewer\")\n install.packages(\"knitr\")\n install.packages(\"rgl\")"
+    "text": "Locate Spatial Clustering of Tall Trees\n\nknitr::opts_chunk$set(global.device = TRUE)\n\ndbscan_result &lt;- dbscan(coords, eps = 12, minPts = 5)\n\ntall_trees$dbscan_cluster &lt;- as.factor(dbscan_result$cluster)\ncolorsize = length (unique (tall_trees$dbscan_cluster))\n\n\n## Filter out first cluster\ncluster &lt;- tall_trees %&gt;%\nfilter(dbscan_cluster != 0)\nplot(chm)\nplot(cluster[3], pch = 16, cex = .5, col = factor(cluster$dbscan_cluster), main = \"Tree Clusters\", add = TRUE)"
+  },
+  {
+    "objectID": "index.html#add-locations-of-spatail-clustering-to-leaflet-map",
+    "href": "index.html#add-locations-of-spatail-clustering-to-leaflet-map",
+    "title": "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data",
+    "section": "Add Locations of Spatail Clustering to Leaflet Map",
+    "text": "Add Locations of Spatail Clustering to Leaflet Map\n\npal &lt;- colorFactor(brewer.pal(4, \"Set1\"), domain = tall_trees$dbscan_cluster)\n\nst_tall_trees &lt;- st_transform(tall_trees, crs = 4326)\nst_tall_trees_filtered &lt;- st_tall_trees %&gt;%\n  filter(dbscan_cluster != 0)\nst_tall_trees_filtered$Z &lt;- st_tall_trees_filtered$Z - 180\n\nleaflet (st_tall_trees_filtered) %&gt;%\n  setView(lng = -78.793, lat = 43.007, zoom = 13)  %&gt;%\n  addTiles() %&gt;%\n  addCircleMarkers(\n    radius = 2,\n    color = ~pal(dbscan_cluster),\n    popup = ~paste(\"Tree ID:\", treeID, \"&lt;br&gt; Height (m):\", Z))\n\nLoad any required packages in a code chunk (you may need to install some packages):\n\n install.packages(\"sf\")\n install.packages(\"terra\")\n install.packages(\"lidR\")\n install.packages(\"raster\")\n install.packages(\"dbscan\")\n install.packages(\"tidyverse\")\n install.packages(\"leaflet\")\n install.packages(\"RColorBrewer\")\n install.packages(\"knitr\")\n install.packages(\"rgl\")"
   },
   {
     "objectID": "data/Readme.html",
