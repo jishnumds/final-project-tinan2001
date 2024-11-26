@@ -8,19 +8,27 @@ date-format: long
 
 # Introduction
 
-\[\~ 200 words\]
+Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the study area’s forest structure.
 
-Observing forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve long scale due to resource limitations. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely. 
+These questions include:
+1.	What is the approximate tree population?
+2.	Where are the locations of individual trees?
+3.	What is the distribution of tree heights in the study site?
+4.	Where are the 90% percentile of tallest trees located?
+5.	Is there spatial clustering of tall trees?
 
 # Materials and methods
 
-\[\~ 200 words\]
+This project utilizes the most recent (2019) remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR point-cloud data is horizontally projected in NAD 83 (2011) and vertically measured in meters. 
+In order to address the project’s questions and goals, Z-values from the point cloud data were filtered and manipulated to find individual trees, tree heights, and spatial clustering of the tallest trees within the study area. 
 
-In this project, I utilized 2019 remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicot Complex. By looking at vertical structure, I was able to find forest characteristics such as spatial clustering of the tallest (90%) woody individuals, approximately how many trees are residing in the study area, and tree height distributions.
+The spatial point data was later transformed into WSG 84 in order to project the tree locations and spatial clustering onto a leaflet map. 
+The critical r packages that were utilized included:
 
-The spatial data was mapped with Leaflet and distributions were visualized using ggplot
+LidR (html to package website)
+Leaflet (html to package website)
+dbscan (html to package website)
 
-The main r packages that were utilized were lidR, terra, and raster.
 
 Here's my current on-going code.
 
@@ -38,7 +46,6 @@ library("rgl")
 ```
 ```{r output = FALSE, echo = FALSE}
 rgl.useNULL=TRUE
-
 knitr::opts_knit$set(global.device = FALSE)
 ```
 
@@ -74,8 +81,13 @@ st_crs(polygon_sf) == st_crs(las)
 
 ## Filter out any OUTliers z-values from las
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
+```
+```{r}
+# plot(filterOUT_las)
+# play3d(spin3d( axis = c(0, 0, 1), rpm = 2,dev = cur3d()),startTime = 0, duration = 10 )
+# movie3d(spin3d(axis = c(0, 0, 1), rpm = 2,), duration = 5, movie = "data/lidar")
 
-# rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)
+knitr::include_graphics("data/Letch.gif", error = FALSE)
 ```
 
 ## Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)
