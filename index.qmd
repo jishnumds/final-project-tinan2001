@@ -11,11 +11,11 @@ date-format: long
 Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the study area’s forest structure.
 
 These questions include:
-1.	What is the approximate tree population?
-2.	Where are the locations of individual trees?
-3.	What is the distribution of tree heights in the study site?
-4.	Where are the 90% percentile of tallest trees located?
-5.	Is there spatial clustering of tall trees?
+\n 1.	What is the approximate tree population?
+\n 2.	Where are the locations of individual trees?
+\n 3.	What is the distribution of tree heights in the study site?
+\n 4.	Where are the 90% percentile of tallest trees located?
+\n 5.	Is there spatial clustering of tall trees?
 
 # Materials and methods
 
@@ -87,7 +87,7 @@ filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 # play3d(spin3d( axis = c(0, 0, 1), rpm = 2,dev = cur3d()),startTime = 0, duration = 10 )
 # movie3d(spin3d(axis = c(0, 0, 1), rpm = 2,), duration = 5, movie = "data/lidar")
 
-knitr::include_graphics("data/Letch.gif", error = FALSE)
+knitr::include_graphics("data/letch.gif", error = FALSE)
 ```
 
 ## Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)
