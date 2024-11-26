@@ -79,7 +79,7 @@ filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 ```
 
 ## Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)
-```{r Test to see if the clipped data will correctly change to leaflet crs}
+```{r Test to see if the clipped data will correctly change to leaflet crs, warning = F}
 ## Reproject the las to 4326 for Leaflet
 options(digits = 15)
 las84 <- st_as_sf(las_clipped, coords = c("X", "Y"), crs = 26918) # crs was NAD83(2011)
