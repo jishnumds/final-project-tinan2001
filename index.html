@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tina Ni">
-<meta name="dcterms.date" content="2024-11-25">
+<meta name="dcterms.date" content="2024-11-26">
 
 <title>Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data – GEO511_FinalProject</title>
 <style>
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-19bbcc6d301408316d57746eade88bff.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -166,7 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 25, 2024</p>
+      <p class="date">November 26, 2024</p>
     </div>
   </div>
   
@@ -180,15 +180,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>[~ 200 words]</p>
-<p>Observing forest structure is beneficial in understanding various forest characteristics. These characteristics include biodiversity, ecosystem disturbances and possibly any threats that may affect the forest structure and ecosystem. On-site forest modeling and monitoring is difficult to preserve long scale due to resource limitations. Utilizing remote sensing tools can allow researchers and foresters to overcome time, labor, and funding restrictions. In this project, I utilized remote sensing data to look at the Letchworth Learning Forest structure and try to interpret forest characteristics remotely.</p>
+<p>Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the study area’s forest structure.</p>
+<p>These questions include: 1. What is the approximate tree population? 2. Where are the locations of individual trees? 3. What is the distribution of tree heights in the study site? 4. Where are the 90% percentile of tallest trees located? 5. Is there spatial clustering of tall trees?</p>
 </section>
 <section id="materials-and-methods" class="level1">
 <h1>Materials and methods</h1>
-<p>[~ 200 words]</p>
-<p>In this project, I utilized 2019 remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicot Complex. By looking at vertical structure, I was able to find forest characteristics such as spatial clustering of the tallest (90%) woody individuals, approximately how many trees are residing in the study area, and tree height distributions.</p>
-<p>The spatial data was mapped with Leaflet and distributions were visualized using ggplot</p>
-<p>The main r packages that were utilized were lidR, terra, and raster.</p>
+<p>This project utilizes the most recent (2019) remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR point-cloud data is horizontally projected in NAD 83 (2011) and vertically measured in meters. In order to address the project’s questions and goals, Z-values from the point cloud data were filtered and manipulated to find individual trees, tree heights, and spatial clustering of the tallest trees within the study area.</p>
+<p>The spatial point data was later transformed into WSG 84 in order to project the tree locations and spatial clustering onto a leaflet map. The critical r packages that were utilized included:</p>
+<p>LidR (html to package website) Leaflet (html to package website) dbscan (html to package website)</p>
 <p>Here’s my current on-going code.</p>
 <section id="load-nessassary-packages" class="level2">
 <h2 class="anchored" data-anchor-id="load-nessassary-packages">Load Nessassary Packages</h2>
@@ -241,45 +240,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(polygon_sf) <span class="sc">==</span> <span class="fu">st_crs</span>(las)</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Filter out any OUTliers z-values from las</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>filterOUT_las <span class="ot">&lt;-</span> <span class="fu">filter_poi</span>(las_clipped, Z <span class="sc">&gt;=</span> <span class="dv">180</span>, Z <span class="sc">&lt;=</span> <span class="dv">220</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># rglwidget(x = scene3d(filterOUT_las), webgl= TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>filterOUT_las <span class="ot">&lt;-</span> <span class="fu">filter_poi</span>(las_clipped, Z <span class="sc">&gt;=</span> <span class="dv">180</span>, Z <span class="sc">&lt;=</span> <span class="dv">220</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(filterOUT_las)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># play3d(spin3d( axis = c(0, 0, 1), rpm = 2,dev = cur3d()),startTime = 0, duration = 10 )</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># movie3d(spin3d(axis = c(0, 0, 1), rpm = 2,), duration = 5, movie = "data/lidar")</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"data/Letch.gif"</span>, <span class="at">error =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data/Letch.gif" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
 </div>
 </section>
 <section id="check-if-new-data-will-correctly-transform-to-leaflet-projection-the-original-data-uses-nad-83-2011-and-leaflet-uses-wgs-84" class="level2">
 <h2 class="anchored" data-anchor-id="check-if-new-data-will-correctly-transform-to-leaflet-projection-the-original-data-uses-nad-83-2011-and-leaflet-uses-wgs-84">Check If New Data Will Correctly Transform to Leaflet Projection (The original data uses NAD 83 (2011) and Leaflet uses WGS 84)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Reproject the las to 4326 for Leaflet</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">15</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(las_clipped, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"X"</span>, <span class="st">"Y"</span>), <span class="at">crs =</span> <span class="dv">26918</span>) <span class="co"># crs was NAD83(2011)</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(las_clipped, <span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
-GDAL Error 1: PROJ: vgridshift: could not find required grid(s).</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
-GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
-(File not found or invalid)</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
-GDAL Error 1: PROJ: vgridshift: could not find required grid(s).</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy, :
-GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
-(File not found or invalid)</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a dataframe of points lat and long to check if st_transform worked  </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>las_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lat =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">2</span>],</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">long =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">1</span>])</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>lat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Reproject the las to 4326 for Leaflet</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">15</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(las_clipped, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"X"</span>, <span class="st">"Y"</span>), <span class="at">crs =</span> <span class="dv">26918</span>) <span class="co"># crs was NAD83(2011)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>las84 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(las_clipped, <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a dataframe of points lat and long to check if st_transform worked  </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>las_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">lat =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">2</span>],</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">long =</span> <span class="fu">st_coordinates</span>(las84)[, <span class="dv">1</span>])</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>lat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 43.005 43.006 43.007 43.009 43.008</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(las_df<span class="sc">$</span>long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] -78.797 -78.796 -78.795 -78.794 -78.793 -78.792 -78.791 -78.790 -78.789
 [10] -78.788 -78.787</code></pre>
@@ -289,45 +284,45 @@ GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
 <section id="rasterize-lidar-data-to-identify-tree-tops-identify-the-tree-population-create-a-data-set-of-the-90th-percentile-of-trees-based-on-height-tallest-trees-height-is-in-meters" class="level2">
 <h2 class="anchored" data-anchor-id="rasterize-lidar-data-to-identify-tree-tops-identify-the-tree-population-create-a-data-set-of-the-90th-percentile-of-trees-based-on-height-tallest-trees-height-is-in-meters">Rasterize LiDAR Data to Identify Tree Tops, Identify the Tree Population, Create a Data Set of the 90th Percentile of Trees Based On Height (Tallest Trees) (Height is in Meters)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## LidR functions to find individual trees</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>chm <span class="ot">&lt;-</span> <span class="fu">rasterize_canopy</span>(filterOUT_las, <span class="fl">0.25</span>, <span class="fu">pitfree</span>(<span class="at">subcircle =</span> <span class="dv">1</span>))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>tree_tops <span class="ot">&lt;-</span> <span class="fu">locate_trees</span>(chm, <span class="fu">lmf</span> (<span class="at">ws=</span><span class="dv">5</span>))</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>filtered_tree_tops <span class="ot">&lt;-</span> tree_tops <span class="sc">%&gt;%</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(Z <span class="sc">&gt;=</span> <span class="dv">185</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(chm, col = height.colors(50))</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), pch = 3)</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>nintypercent <span class="ot">&lt;-</span> <span class="fu">quantile</span>(filtered_tree_tops<span class="sc">$</span>Z, <span class="fl">0.90</span>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>tall_trees <span class="ot">&lt;-</span> filtered_tree_tops[filtered_tree_tops<span class="sc">$</span>Z <span class="sc">&gt;</span> nintypercent,]</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(tall_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">## LidR functions to find individual trees</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>chm <span class="ot">&lt;-</span> <span class="fu">rasterize_canopy</span>(filterOUT_las, <span class="fl">0.25</span>, <span class="fu">pitfree</span>(<span class="at">subcircle =</span> <span class="dv">1</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>tree_tops <span class="ot">&lt;-</span> <span class="fu">locate_trees</span>(chm, <span class="fu">lmf</span> (<span class="at">ws=</span><span class="dv">5</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>filtered_tree_tops <span class="ot">&lt;-</span> tree_tops <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(Z <span class="sc">&gt;=</span> <span class="dv">185</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(chm, col = height.colors(50))</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), pch = 3)</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>nintypercent <span class="ot">&lt;-</span> <span class="fu">quantile</span>(filtered_tree_tops<span class="sc">$</span>Z, <span class="fl">0.90</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>tall_trees <span class="ot">&lt;-</span> filtered_tree_tops[filtered_tree_tops<span class="sc">$</span>Z <span class="sc">&gt;</span> nintypercent,]</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(tall_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="the-tree-height-distribution-within-the-forest" class="level2">
 <h2 class="anchored" data-anchor-id="the-tree-height-distribution-within-the-forest">The Tree Height Distribution within the Forest</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tree_Z <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(filtered_tree_tops<span class="sc">$</span>Z)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tree_Z) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"height"</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> tree_Z<span class="sc">$</span>height <span class="sc">-</span> <span class="dv">180</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(test)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tree_Z <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(filtered_tree_tops<span class="sc">$</span>Z)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tree_Z) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"height"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> tree_Z<span class="sc">$</span>height <span class="sc">-</span> <span class="dv">180</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(test)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 33.901</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tall_trees_height <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tall_trees<span class="sc">$</span>Z <span class="sc">-</span> <span class="dv">180</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tall_trees_height) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"height"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="do">## in meters</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">data =</span> test, <span class="fu">aes</span>(<span class="at">x =</span> test), <span class="at">binwidth =</span> <span class="fl">0.5</span>,, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>)<span class="sc">+</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">data =</span> tall_trees_height, <span class="fu">aes</span>(<span class="at">x =</span> height), <span class="at">binwidth =</span> <span class="fl">0.5</span>,, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"red"</span>, <span class="at">alpha =</span> .<span class="dv">5</span>)<span class="sc">+</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">mean</span>(test<span class="sc">$</span>test)), <span class="at">color=</span><span class="st">"blue"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">linewidth=</span><span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Tree Heights in Meters"</span>, <span class="at">x =</span> <span class="st">"Height (m)"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">subtitle =</span> <span class="st">"Mean of all heights (Blue) </span><span class="sc">\n</span><span class="st">90% of tallest trees (Red)"</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">caption =</span> <span class="st">"Letchworth Teaching Forest (2019)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tall_trees_height <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tall_trees<span class="sc">$</span>Z <span class="sc">-</span> <span class="dv">180</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tall_trees_height) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"height"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## in meters</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">data =</span> test, <span class="fu">aes</span>(<span class="at">x =</span> test), <span class="at">binwidth =</span> <span class="fl">0.5</span>,, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"green"</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>)<span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_histogram</span>(<span class="at">data =</span> tall_trees_height, <span class="fu">aes</span>(<span class="at">x =</span> height), <span class="at">binwidth =</span> <span class="fl">0.5</span>,, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill=</span><span class="st">"red"</span>, <span class="at">alpha =</span> .<span class="dv">5</span>)<span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">mean</span>(test<span class="sc">$</span>test)), <span class="at">color=</span><span class="st">"blue"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>, <span class="at">linewidth=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Tree Heights in Meters"</span>, <span class="at">x =</span> <span class="st">"Height (m)"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">subtitle =</span> <span class="st">"Mean of all heights (Blue) </span><span class="sc">\n</span><span class="st">90% of tallest trees (Red)"</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">caption =</span> <span class="st">"Letchworth Teaching Forest (2019)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -340,23 +335,23 @@ GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
 <section id="locate-the-tallest-trees-and-tree-tops-within-the-forest" class="level2">
 <h2 class="anchored" data-anchor-id="locate-the-tallest-trees-and-tree-tops-within-the-forest">Locate the Tallest Trees, and Tree Tops within the Forest</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">global.device =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm, <span class="at">main =</span> <span class="st">"Tree Tops"</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(filtered_tree_tops[<span class="dv">2</span>],<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">main =</span> <span class="st">"tree_tops"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">global.device =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm, <span class="at">main =</span> <span class="st">"Tree Tops"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(filtered_tree_tops[<span class="dv">2</span>],<span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">main =</span> <span class="st">"tree_tops"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm, <span class="at">main =</span> <span class="st">"Tall Trees"</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tall_trees, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">main =</span> <span class="st">"tall_trees"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm, <span class="at">main =</span> <span class="st">"Tall Trees"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tall_trees, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">main =</span> <span class="st">"tall_trees"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -365,19 +360,19 @@ GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
 <section id="locate-spatial-clustering-of-tall-trees" class="level2">
 <h2 class="anchored" data-anchor-id="locate-spatial-clustering-of-tall-trees">Locate Spatial Clustering of Tall Trees</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">global.device =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dbscan_result <span class="ot">&lt;-</span> <span class="fu">dbscan</span>(coords, <span class="at">eps =</span> <span class="dv">12</span>, <span class="at">minPts =</span> <span class="dv">5</span>)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>tall_trees<span class="sc">$</span>dbscan_cluster <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dbscan_result<span class="sc">$</span>cluster)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>colorsize <span class="ot">=</span> <span class="fu">length</span> (<span class="fu">unique</span> (tall_trees<span class="sc">$</span>dbscan_cluster))</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Filter out first cluster</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>cluster <span class="ot">&lt;-</span> tall_trees <span class="sc">%&gt;%</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(dbscan_cluster <span class="sc">!=</span> <span class="dv">0</span>)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cluster[<span class="dv">3</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">col =</span> <span class="fu">factor</span>(cluster<span class="sc">$</span>dbscan_cluster), <span class="at">main =</span> <span class="st">"Tree Clusters"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">global.device =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>dbscan_result <span class="ot">&lt;-</span> <span class="fu">dbscan</span>(coords, <span class="at">eps =</span> <span class="dv">12</span>, <span class="at">minPts =</span> <span class="dv">5</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>tall_trees<span class="sc">$</span>dbscan_cluster <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dbscan_result<span class="sc">$</span>cluster)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>colorsize <span class="ot">=</span> <span class="fu">length</span> (<span class="fu">unique</span> (tall_trees<span class="sc">$</span>dbscan_cluster))</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Filter out first cluster</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>cluster <span class="ot">&lt;-</span> tall_trees <span class="sc">%&gt;%</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(dbscan_cluster <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chm)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cluster[<span class="dv">3</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> .<span class="dv">5</span>, <span class="at">col =</span> <span class="fu">factor</span>(cluster<span class="sc">$</span>dbscan_cluster), <span class="at">main =</span> <span class="st">"Tree Clusters"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -390,33 +385,33 @@ GDAL Error 1: PROJ: pipeline: Pipeline: Bad step definition: proj=vgridshift
 <section id="add-locations-of-spatail-clustering-to-leaflet-map" class="level2">
 <h2 class="anchored" data-anchor-id="add-locations-of-spatail-clustering-to-leaflet-map">Add Locations of Spatail Clustering to Leaflet Map</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pal <span class="ot">&lt;-</span> <span class="fu">colorFactor</span>(<span class="fu">brewer.pal</span>(<span class="dv">4</span>, <span class="st">"Set1"</span>), <span class="at">domain =</span> tall_trees<span class="sc">$</span>dbscan_cluster)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>st_tall_trees <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(tall_trees, <span class="at">crs =</span> <span class="dv">4326</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>st_tall_trees_filtered <span class="ot">&lt;-</span> st_tall_trees <span class="sc">%&gt;%</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dbscan_cluster <span class="sc">!=</span> <span class="dv">0</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>st_tall_trees_filtered<span class="sc">$</span>Z <span class="ot">&lt;-</span> st_tall_trees_filtered<span class="sc">$</span>Z <span class="sc">-</span> <span class="dv">180</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span> (st_tall_trees_filtered) <span class="sc">%&gt;%</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setView</span>(<span class="at">lng =</span> <span class="sc">-</span><span class="fl">78.793</span>, <span class="at">lat =</span> <span class="fl">43.007</span>, <span class="at">zoom =</span> <span class="dv">13</span>)  <span class="sc">%&gt;%</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">2</span>,</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="sc">~</span><span class="fu">pal</span>(dbscan_cluster),</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Tree ID:"</span>, treeID, <span class="st">"&lt;br&gt; Height (m):"</span>, Z))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pal <span class="ot">&lt;-</span> <span class="fu">colorFactor</span>(<span class="fu">brewer.pal</span>(<span class="dv">4</span>, <span class="st">"Set1"</span>), <span class="at">domain =</span> tall_trees<span class="sc">$</span>dbscan_cluster)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>st_tall_trees <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(tall_trees, <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>st_tall_trees_filtered <span class="ot">&lt;-</span> st_tall_trees <span class="sc">%&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dbscan_cluster <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>st_tall_trees_filtered<span class="sc">$</span>Z <span class="ot">&lt;-</span> st_tall_trees_filtered<span class="sc">$</span>Z <span class="sc">-</span> <span class="dv">180</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span> (st_tall_trees_filtered) <span class="sc">%&gt;%</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setView</span>(<span class="at">lng =</span> <span class="sc">-</span><span class="fl">78.793</span>, <span class="at">lat =</span> <span class="fl">43.007</span>, <span class="at">zoom =</span> <span class="dv">13</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="dv">2</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="sc">~</span><span class="fu">pal</span>(dbscan_cluster),</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">popup =</span> <span class="sc">~</span><span class="fu">paste</span>(<span class="st">"Tree ID:"</span>, treeID, <span class="st">"&lt;br&gt; Height (m):"</span>, Z))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Load any required packages in a code chunk (you may need to install some packages):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"sf"</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"terra"</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"lidR"</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"raster"</span>)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"dbscan"</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"leaflet"</span>)</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"RColorBrewer"</span>)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"knitr"</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"rgl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"sf"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"terra"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"lidR"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"raster"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"dbscan"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"leaflet"</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"RColorBrewer"</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"knitr"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">install.packages</span>(<span class="st">"rgl"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -514,8 +509,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -626,7 +619,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
