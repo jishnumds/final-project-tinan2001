@@ -4,6 +4,8 @@ author: "Tina Ni"
 subtitle: "Understanding forest structure and characteristics in Letchworth Learning Forest"
 date: today
 date-format: long
+code-fold: true
+code-summary:"Show Script"
 ---
 
 # Introduction
@@ -88,7 +90,7 @@ st_crs(polygon_sf) == st_crs(las)
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 ```
 
-```{r}
+```{r Lidar Point-Cloud Data}
 # plot(filterOUT_las)
 # play3d(spin3d( axis = c(0, 0, 1), rpm = 2,dev = cur3d()),startTime = 0, duration = 10 )
 # movie3d(spin3d(axis = c(0, 0, 1), rpm = 2,), duration = 5, movie = "data/lidar")
