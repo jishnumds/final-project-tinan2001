@@ -10,12 +10,13 @@ date-format: long
 
 Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the study area’s forest structure.
 
-These questions include:
-\n 1.	What is the approximate tree population?
-\n 2.	Where are the locations of individual trees?
-\n 3.	What is the distribution of tree heights in the study site?
-\n 4.	Where are the 90% percentile of tallest trees located?
-\n 5.	Is there spatial clustering of tall trees?
+These questions include:\n
+
+1.	What is the approximate tree population?\n
+2.	Where are the locations of individual trees?\n
+3.	What is the distribution of tree heights in the study site?\n
+4.	Where are the 90% percentile of tallest trees located?\n
+5.	Is there spatial clustering of tall trees?
 
 # Materials and methods
 
