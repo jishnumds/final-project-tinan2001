@@ -10,7 +10,7 @@ code-summary: "Script"
 
 ## Introduction
 
-Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest strucutre analysis.
+Forest structure plays a critical role in maintaining biodiversity and supporting ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
 
 These questions include:
 
@@ -26,9 +26,9 @@ These questions include:
 
 ## Materials and methods
 
-This project utilizes the most recent (2019) remote sensing LiDAR point-cloud data to measure vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR point-cloud data ("las") was , originally, horizontally projected in NAD83 (2011) and vertically measured in meters. In order to address the project’s questions and goals, Z-values from the point cloud data were filtered and manipulated, using the lidR and dbscan packages, to find individual trees, tree heights, and spatial clustering of the tallest trees within the study area. The new filtered data set was called "filteredOUT_las".
+This project utilized the most recent (2019) LiDAR point cloud data to assess vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR data, originally projected horizontally in NAD83 (2011) and vertically measured in meters, was processed to answer question listed above. Using the lidR and dbscan packages, Z-values from the point-cloud data were filtered and analyzed to identify individual trees, calculate tree heights, and determine spatial clustering of the tallest trees within the study area. The resulting dataset, named `filterOUT_las`, was re-projected into WGS84, enabling tree locations and clustering pattern visualization on an interactive Leaflet map.
 
-filterOUT_las was later transformed into WSG 84 in order to project the tree locations and spatial clustering onto a leaflet map. The critical r packages that were utilized included:
+Critical R packages utilized in this project included:
 
 [LidR](https://github.com/r-lidar/lidR)
 
@@ -36,7 +36,7 @@ filterOUT_las was later transformed into WSG 84 in order to project the tree loc
 
 [dbscan](https://github.com/mhahsler/dbscan)
 
-Below is the r script.
+Below is the R script:
 
 ##### Load Nessassary Packages
 
@@ -82,6 +82,7 @@ polygon_coords <- matrix(c(
 
 ## Bounding Box has been given CRS associated with las-CRS 
 polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
+plot(polygon_sf)
 ```
 
 ##### Create new parameter for las called filterOUT_las
@@ -94,9 +95,10 @@ st_crs(polygon_sf) == st_crs(las)
 
 ## Filter out any OUTliers z-values from las
 filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
+plot(filterOUT_las)
 ```
 
-##### Gif of the filterOUT_las
+##### GIF of the filterOUT_las
 
 ```{r Lidar Point-Cloud Data, out.width = "300px", fig.align = "center"}
 # plot(filterOUT_las)
@@ -104,7 +106,6 @@ filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
 
 knitr::include_graphics("data/letch.gif", error = FALSE)
 ```
-
 
 ##### Check if new data will correctly transform to leaflet projection. Original data (las) used NAD83 (2011) projection and Leaflet uses WGS84 projection
 
@@ -118,7 +119,6 @@ las84 <- st_transform(las_clipped, crs = 4326)
 ## Create a dataframe of points lat and long to check if st_transform worked  
 las_df <- data.frame(lat = st_coordinates(las84)[, 2],
                      long = st_coordinates(las84)[, 1])
-
 unique(las_df$lat)
 unique(las_df$long)
 ```
@@ -143,7 +143,7 @@ tall_trees <- filtered_tree_tops[filtered_tree_tops$Z > nintypercent,]
 coords <- st_coordinates(tall_trees)
 ```
 
-##### Using the ggplot2 package to show the tree hieght distribution and population within the study area.
+##### Using ggplot2 package to show the tree hieght distribution and population in study area.
 
 ```{r making a histogram of height distribution}
 tree_Z <- as.data.frame(filtered_tree_tops$Z)
