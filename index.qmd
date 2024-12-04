@@ -50,6 +50,7 @@ library("tidyverse")
 library("leaflet")
 library("RColorBrewer")
 library("rgl")
+library("knitr")
 ```
 
 ```{r output = FALSE, echo = FALSE}
@@ -94,8 +95,8 @@ las_clipped <- lidR::clip_roi(las, polygon_sf)
 st_crs(polygon_sf) == st_crs(las)
 
 ## Filter out any OUTliers z-values from las
-filterOUT_las <- filter_poi(las_clipped, Z >= 180, Z <= 220)
-plot(filterOUT_las)
+filterOUT_las <- filter_poi(las_clipped, Z >= 190, Z <= 220)
+
 ```
 
 ##### GIF of the filterOUT_las
@@ -131,7 +132,7 @@ chm <- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))
 
 tree_tops <- locate_trees(chm, lmf (ws=5))
 filtered_tree_tops <- tree_tops %>%
-filter(Z >= 185)
+filter(Z >= 190)
 
 #plot(chm, col = height.colors(50))
 #plot(sf::st_geometry(filtered_tree_tops), pch = 3)
@@ -148,10 +149,10 @@ coords <- st_coordinates(tall_trees)
 ```{r making a histogram of height distribution}
 tree_Z <- as.data.frame(filtered_tree_tops$Z)
 colnames(tree_Z) <- c("height")
-ind_trees <- tree_Z$height - 180
+ind_trees <- tree_Z$height - 190
 ind_trees <- as.data.frame(ind_trees)
 
-tall_trees_height <- as.data.frame(tall_trees$Z - 180)
+tall_trees_height <- as.data.frame(tall_trees$Z - 190)
 colnames(tall_trees_height) <- c("height")
 ## in meters
 
@@ -167,6 +168,18 @@ theme_classic()+
 labs(title = "Distribution of Tree Heights in Meters", x = "Height (m)", y = "Frequency",
      subtitle = subtitle,
      caption = "Letchworth Teaching Forest (2019)")
+```
+
+```{r tree height tables}
+allT <- as.data.frame (filtered_tree_tops)
+allT$Z <- allT$Z - 190
+allT$Z <- formatC(allT$Z, 2)
+kable(allT[1:10,], col_names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 Tree Heights (m)")
+
+ninT <- as.data.frame(tall_trees)
+ninT$Z <- tall_trees$Z - 190
+ninT$Z <- formatC(ninT$Z)
+kable(ninT[1:10,1:3], col_names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 90th Percentile Tree Heights (m)")
 ```
 
 ##### Locate the tallest trees, and tree tops within the study area
@@ -236,6 +249,7 @@ leaflet (st_tall_trees_filtered) %>%
  #install.packages("RColorBrewer")
  #install.packages("knitr")
  #install.packages("rgl")
+
 ```
 
 ## Conclusions
