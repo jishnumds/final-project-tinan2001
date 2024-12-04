@@ -174,12 +174,12 @@ labs(title = "Distribution of Tree Heights in Meters", x = "Height (m)", y = "Fr
 allT <- as.data.frame (filtered_tree_tops)
 allT$Z <- allT$Z - 190
 allT$Z <- formatC(allT$Z, 2)
-kable(allT[1:10,], col_names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 Tree Heights (m)")
+kable(allT[1:10,], col.names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 Tree Heights (m)")
 
 ninT <- as.data.frame(tall_trees)
 ninT$Z <- tall_trees$Z - 190
 ninT$Z <- formatC(ninT$Z)
-kable(ninT[1:10,1:3], col_names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 90th Percentile Tree Heights (m)")
+kable(ninT[1:10,1:3], col.names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 90th Percentile Tree Heights (m)")
 ```
 
 ##### Locate the tallest trees, and tree tops within the study area
@@ -254,7 +254,7 @@ leaflet (st_tall_trees_filtered) %>%
 
 ## Conclusions
 
-This study demonstrates the potential of using remote sensing data to assess forest structure with promising results. The analysis indicates a total of approximately 2,447 trees, with individual tree locations identified. Spatial clustering of the tallest trees were observed in six areas. The overall average height across the entire tree population was found to be 20.19 meters. It is important to note that the results derived solely from remote sensing data and computational analysis, offer only a rough estimate of forest structure characteristics. For more precise and reliable conclusions, incorporating field data is essential to provide a reference for validating the remote sensing analysis.
+This study demonstrates the potential of using remote sensing data to assess forest structure with promising results. The analysis indicates a total of approximately 2,018 trees, with individual tree locations identified. Spatial clustering of the tallest trees were observed in six areas. The overall average height across the entire tree population was found to be 13.02 meters. It is important to note that the results derived solely from remote sensing data and computational analysis, offer only a rough estimate of forest structure characteristics. For more precise and reliable conclusions, incorporating field data is essential to provide a reference for validating the remote sensing analysis.
 
 In conclusion, while remote sensing provides a faster method for assessing forest characteristics, the inclusion of field data is crucial to ensure the accuracy and reliability of the results. Combining both approaches will offer a more comprehensive understanding of forest dynamics.
 
