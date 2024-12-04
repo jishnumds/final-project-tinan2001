@@ -1,5 +1,5 @@
 ---
-title: "Letchworth Learning Forest Structure Modeling Utilizing LiDAR Point Cloud Data"
+title: "Letchworth Teaching Forest Forest Structure Modeling Utilizing LiDAR Point Cloud Data"
 author: "Tina Ni"
 subtitle: "Understanding forest structure and characteristics in Letchworth Learning Forest"
 date: today
