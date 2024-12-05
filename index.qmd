@@ -85,9 +85,8 @@ polygon_coords <- matrix(c(
 new_bbox <- as.data.frame (polygon_coords)
 ## Bounding Box has been given CRS associated with las-CRS 
 polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
-plot(polygon_sf)
 
-kable(new_bbox, col.names = c("X Coord","Y Coord"), align = "cc", caption = "New Bound")
+kable(new_bbox, col.names = c("X Coord","Y Coord"), align = "cc", caption = "New Bounding Poly Coordinates")
 ```
 
 ##### Create new parameter for las called filterOUT_las
