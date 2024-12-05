@@ -10,7 +10,7 @@ code-summary: "Script"
 
 ## Introduction
 
-Forest structure plays a critical role in understanding forest biodiversity and ecosystem services (MacKinnon, 2012). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
+Forest structure plays a critical role in understanding forest biodiversity and ecosystem services (MacKinnon, 2012;Wang et al., 2024). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
 
 These questions include:
 
@@ -26,7 +26,7 @@ These questions include:
 
 ## Materials and methods
 
-This project utilized the most recent (2019) LiDAR point cloud data to assess vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR data, originally projected horizontally in NAD83 (2011) and vertically measured in meters, was processed to answer question listed above. Using the lidR and dbscan packages, Z-values from the point-cloud data were filtered and analyzed to identify individual trees, calculate tree heights, and determine spatial clustering of the tallest trees within the study area. The resulting dataset, named `filterOUT_las`, was re-projected into WGS84, enabling tree locations and clustering pattern visualization on an interactive Leaflet map.
+This project utilized the most recent (2019) LiDAR point cloud data (USGS Lidar Point Cloud NY_3County_2019_A19 E1387n2349_2019 - ScienceBase-Catalog, n.d.) to assess vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR data, originally projected horizontally in NAD83 (2011) and vertically measured in meters, was processed to answer question listed above. Using the lidR and dbscan packages, Z-values from the point-cloud data were filtered and analyzed to identify individual trees, calculate tree heights, and determine spatial clustering of the tallest trees within the study area. The resulting dataset, named `filterOUT_las`, was re-projected into WGS84, enabling tree locations and clustering pattern visualization on an interactive Leaflet map.
 
 Critical R packages utilized in this project included:
 
@@ -261,5 +261,9 @@ In conclusion, while remote sensing provides a faster method for assessing fores
 ## References
 
 MacKinnon, A. (2012). *Forest Structure: A Key to the Ecosystem*. <https://www.semanticscholar.org/paper/Forest-Structure-%3A-A-Key-to-the-Ecosystem-MacKinnon/57c825a33e087bd8797333885ebf641ed8416377>
+
+USGS Lidar Point Cloud NY_3County_2019_A19 e1387n2349_2019—ScienceBase-Catalog. (n.d.). ScienceBase. Retrieved December 5, 2024,<https://www.sciencebase.gov/catalog/item/5f6b632982ce38aaa244d224>
+
+Wang, M., Baeten, L., Van Coillie, F., Calders, K., Verheyen, K., Ponette, Q., Blondeel, H., Muys, B., Armston, J., & Verbeeck, H. (2024). Tree species identity and interaction determine vertical forest structure in young planted forests measured by terrestrial laser scanning. Forest Ecosystems, 11, 100196. <https://doi.org/10.1016/j.fecs.2024.100196>
 
 Wulder, M. A., White, J. C., Nelson, R. F., Næsset, E., Ørka, H. O., Coops, N. C., Hilker, T., Bater, C. W., & Gobakken, T. (2012). Lidar sampling for large-area forest characterization: A review. *Remote Sensing of Environment*, *121*, 196–209. <https://doi.org/10.1016/j.rse.2012.02.001>
