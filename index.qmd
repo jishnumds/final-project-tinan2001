@@ -66,7 +66,7 @@ las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
 ## Look at the parameter coordinates of original data
 original_bbox <- st_bbox(las)
 og_bbox <- as.data.frame(original_bbox)
-kable(og_bbox, col.names = ("Bounding Box Coordinates"), align = "c")
+kable(og_bbox, col.names = ("Bounding Box Coordinates"), align = "c", caption = "Original Bounding Box")
 ```
 
 ##### Create new bounding box filter out non-forested area
