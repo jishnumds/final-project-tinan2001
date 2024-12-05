@@ -4,8 +4,8 @@ author: "Tina Ni"
 subtitle: "Understanding forest structure and characteristics in Letchworth Learning Forest"
 date: today
 date-format: long
-code-fold: true
-code-summary: "Script"
+# code-fold: true
+# code-summary: "Script"
 ---
 
 ## Introduction
