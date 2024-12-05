@@ -65,9 +65,7 @@ las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
 
 ## Look at the parameter coordinates of original data
 original_bbox <- st_bbox(las)
-og_bbox <- as.data.frame(original_bbox)
-colnames(og_bbox) <- c("XY Coords")
-og_bbox
+
 ```
 
 ##### Create new bounding box filter out non-forested area
@@ -83,12 +81,9 @@ polygon_coords <- matrix(c(
   1388000, 2349355  #right bottom corner
 ), ncol = 2, byrow = TRUE)
 
-new_bbox <- as.data.frame (polygon_coords)
 ## Bounding Box has been given CRS associated with las-CRS 
 polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
 
-colnames(new_bbox) <- c("X Coord", "Y Coord")
-new_bbox
 ```
 
 ##### Create new parameter for las called filterOUT_las
