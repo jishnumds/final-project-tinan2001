@@ -10,7 +10,7 @@ code-summary: "Script"
 
 ## Introduction
 
-Forest structure plays a critical role in understanding forest biodiversity and ecosystem services (MacKinnon, 2012;Wang et al., 2024). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
+Forest structure plays a critical role in understanding forest biodiversity and ecosystem services (MacKinnon, 2012; Wang et al., 2024). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
 
 These questions include:
 
