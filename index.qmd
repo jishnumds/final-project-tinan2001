@@ -1,120 +1,268 @@
 ---
-title: "My Final Project Template"
-author: Your name here
-subtitle: Subtitle here if desired
+title: "Letchworth Teaching Forest - Forest Structure Modeling, Utilizing LiDAR Point Cloud Data"
+author: "Tina Ni"
+subtitle: "Understanding forest structure and characteristics in Letchworth Learning Forest"
 date: today
 date-format: long
+code-fold: true
+code-summary: "Script"
 ---
+## Introduction
 
-# Introduction
+Forest structure plays a critical role in understanding forest biodiversity and ecosystem services (MacKinnon, 2012; Wang et al., 2024). However, measuring forest structure through traditional field data collection is challenging due to time and funding constraints, particularly in large forests. The introduction of remote sensing has been a key driver in obtaining large forest structure data indirectly, while lessening the burden of time and funding limitations (Wulder et al., 2012). In this project, I utilized publicly available remote sensing data to answer a few questions about the Letchworth Teaching Forest's structure and assessed the effectiveness of remote sensing as a stand-alone method for forest structure analysis.
 
-\[\~ 200 words\]
+These questions include:
 
-Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way. Include figures if you like.
+1\. What is the approximate tree population?
 
-# Materials and methods
+2\. Where are the locations of individual trees?
 
-\[\~ 200 words\]
+3\. What is the distribution of tree heights in the study site?
 
-Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.
+4\. Where are the 90% percentile of tallest trees located?
 
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
+5\. Is there spatial clustering of tall trees?
 
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
+## Materials and methods
 
-You can do bullets like this:
+This project utilized the most recent (2019) LiDAR point cloud data (USGS Lidar Point Cloud NY_3County_2019_A19 E1387n2349_2019 - ScienceBase-Catalog, n.d.) to assess vertical forest structure within the Letchworth Learning Forest near the Ellicott Complex. The LiDAR data, originally projected horizontally in NAD83 (2011) and vertically measured in meters, was processed to answer question listed above. Using the lidR and dbscan packages, Z-values from the point-cloud data were filtered and analyzed to identify individual trees, calculate tree heights, and determine spatial clustering of the tallest trees within the study area. The resulting dataset, named `filterOUT_las`, was re-projected into WGS84, enabling tree locations and clustering pattern visualization on an interactive Leaflet map.
 
--   The first most important thing
--   The second most important thing
--   The third most important thing
+Critical R packages utilized in this project included:
 
-You can do numbers like this:
+[LidR](https://github.com/r-lidar/lidR)
 
-1.  The first most important thing
-2.  The second most important thing
-3.  The third most important thing
+[Leaflet](https://github.com/rstudio/leaflet)
 
-See <http://rmarkdown.rstudio.com/> for all the amazing things you can do.
+[dbscan](https://github.com/mhahsler/dbscan)
 
-Here's my first code chunk.
+Below is the R script:
 
-```{r}
-x=3+4
+##### Load Nessassary Packages
+
+```{r Load packages, echo = TRUE, output = FALSE, results = FALSE}
+library("sf")
+library("terra")
+library("lidR")
+library("raster")
+library("dbscan")
+library("tidyverse")
+library("leaflet")
+library("RColorBrewer")
+library("rgl")
+library("knitr")
 ```
 
-Refer to output in your narrative like this: x=`r x` .
-
-Load any required packages in a code chunk (you may need to install some packages):
-
-```{r, message=F, warning=F}
-library(tidyverse)
-library(leaflet)
-library(kableExtra)
-library(htmlwidgets)
-library(widgetframe)
-knitr::opts_chunk$set(widgetframe_widgets_dir = 'widgets' ) 
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
+```{r output = FALSE, echo = FALSE}
+rgl.useNULL=TRUE
+knitr::opts_knit$set(global.device = FALSE)
 ```
 
-## Download and clean all required data
+##### Load USGS lidar point-cloud data of Letchworth Teaching Forest (las)
 
-```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
+```{r Read LiDAR data }
+las <- readLAS("data/Letchworth_Teaching_Forest_Lidar.laz")
+
+## Look at the parameter coordinates of original data
+original_bbox <- st_bbox(las)
+
 ```
 
-```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
+##### Create new bounding box filter out non-forested area
+
+```{r Create a new bounding box that only includes the forest area, echo = TRUE, results = 'hide'}
+polygon_coords <- matrix(c(
+  1388000, 2349355, #right bottom corner
+  1388000, 2349700, #right top corner
+  1387450, 2349700, #mid top corner
+  1387450, 2349450, #mid mid corner
+  1387300, 2349200, #left bottom corner
+  1387350, 2349200, #mid bottom corner
+  1388000, 2349355  #right bottom corner
+), ncol = 2, byrow = TRUE)
+
+## Bounding Box has been given CRS associated with las-CRS 
+polygon_sf <- st_sfc(st_polygon(list(polygon_coords)),  crs = st_crs(las))
+
 ```
 
-Add any additional processing steps here.
+##### Create new parameter for las called filterOUT_las
 
-# Results
+```{r Crop orinigal data by bounding box and filter out vertical outliers, echo = TRUE, output = FALSE, results = FALSE}
+las_clipped <- lidR::clip_roi(las, polygon_sf)
 
-\[\~200 words\]
+## Check if the crs is still the same
+st_crs(polygon_sf) == st_crs(las)
 
-Tables and figures (maps and other graphics) are carefully planned to convey the results of your analysis. Intense exploration and evidence of many trials and failures. The author looked at the data in many different ways before coming to the final presentation of the data.
+## Filter out any OUTliers z-values from las
+filterOUT_las <- filter_poi(las_clipped, Z >= 190, Z <= 220)
 
-Show tables, plots, etc. and describe them.
-
-```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-m <- leaflet(data) %>% 
-  addTiles() %>% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %>% 
-  addPopups(~x[2], ~y[2], "Random popup")
-m  # a map with the default OSM tile layer
 ```
 
-```{r}
-data %>% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()
+##### GIF of the filterOUT_las
+
+```{r Lidar Point-Cloud Data, out.width = "300px", fig.align = "center"}
+# plot(filterOUT_las)
+# movie3d(spin3d(axis = c(0, 0, 1), rpm = 2,), duration = 5, movie = "data/lidar")
+
+knitr::include_graphics("data/letch.gif", error = FALSE)
 ```
 
-### Dygraphs Example
+##### Check if new data will correctly transform to leaflet projection. Original data (las) used NAD83 (2011) projection and Leaflet uses WGS84 projection
 
-```{r}
-library(dygraphs)
-dygraph(nhtemp, main = "New Haven Temperatures") |> 
-  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01")) 
+```{r Test to see if the clipped data will correctly change to leaflet crs, warning = F}
+## Reproject the las to 4326 for Leaflet
+options(digits = 15)
+las84 <- st_as_sf(las_clipped, coords = c("X", "Y"), crs = 26918) # crs was NAD83(2011)
+las84 <- st_transform(las_clipped, crs = 4326)
+
+
+## Create a dataframe of points lat and long to check if st_transform worked  
+las_df <- data.frame(lat = st_coordinates(las84)[, 2],
+                     long = st_coordinates(las84)[, 1])
+unique(las_df$lat)
+unique(las_df$long)
 ```
 
-# Conclusions
+##### Rasterize filterOUT_las to find trees, tree tops, and tree population. Then, create a new data set called tall_trees containg the 90th percentile of trees based on hieght(m)
 
-\[\~200 words\]
+```{r Rasterize data, and find the 90 percent trees, results = 'hide'}
+## LidR functions to find individual trees
+chm <- rasterize_canopy(filterOUT_las, 0.25, pitfree(subcircle = 1))
 
-Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
+tree_tops <- locate_trees(chm, lmf (ws=5))
+filtered_tree_tops <- tree_tops %>%
+filter(Z >= 190)
 
-# References
+#plot(chm, col = height.colors(50))
+#plot(sf::st_geometry(filtered_tree_tops), pch = 3)
+#plot(sf::st_geometry(filtered_tree_tops), add = TRUE, pch = 3)
 
-All sources are cited in a consistent manner
+nintypercent <- quantile(filtered_tree_tops$Z, 0.90)
+tall_trees <- filtered_tree_tops[filtered_tree_tops$Z > nintypercent,]
+
+coords <- st_coordinates(tall_trees)
+```
+
+##### Using ggplot2 package to show the tree hieght distribution and population in study area.
+
+```{r making a histogram of height distribution}
+tree_Z <- as.data.frame(filtered_tree_tops$Z)
+colnames(tree_Z) <- c("height")
+ind_trees <- tree_Z$height - 190
+ind_trees <- as.data.frame(ind_trees)
+
+tall_trees_height <- as.data.frame(tall_trees$Z - 190)
+colnames(tall_trees_height) <- c("height")
+## in meters
+
+mean <- mean(ind_trees$ind_trees)
+mean <- round(mean, 2)
+subtitle = paste("Total trees = ", nrow(ind_trees), " trees \nMean (Blue) = ", mean,"\n90% of tallest trees (Red)")
+
+ggplot()+
+geom_histogram(data = ind_trees, aes(x = ind_trees), binwidth = 0.5,, color = "black", fill="green", alpha = 0.25)+
+geom_histogram(data = tall_trees_height, aes(x = height), binwidth = 0.5,, color = "black", fill="red", alpha = .5)+
+geom_vline(aes(xintercept = mean(ind_trees$ind_trees)), color="blue", linetype="dashed", linewidth=1)+
+theme_classic()+
+labs(title = "Distribution of Tree Heights in Meters", x = "Height (m)", y = "Frequency",
+     subtitle = subtitle,
+     caption = "Letchworth Teaching Forest (2019)")
+```
+
+```{r tree height tables}
+allT <- as.data.frame (filtered_tree_tops)
+allT$Z <- allT$Z - 190
+allT$Z <- formatC(allT$Z, 2)
+kable(allT[1:10,], col.names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 Tree Heights (m)")
+
+ninT <- as.data.frame(tall_trees)
+ninT$Z <- tall_trees$Z - 190
+ninT$Z <- formatC(ninT$Z)
+kable(ninT[1:10,1:3], col.names = c("Tree ID", "Height (m)", "Location"), align = ("ccc"), caption = "First 10 90th Percentile Tree Heights (m)")
+```
+
+##### Locate the tallest trees, and tree tops within the study area
+
+```{r warning = FALSE}
+knitr::opts_chunk$set(global.device = TRUE)
+
+plot(chm, main = "Tree Tops")
+plot(filtered_tree_tops[2],pch = 16, cex = .5, main = "tree_tops", add = TRUE)
+
+plot(chm, main = "Tallest (90%) Trees")
+plot(tall_trees, pch = 16, cex = .5, main = "tall_trees", add = TRUE)
+
+```
+
+##### Locate spatial clustering of tallest trees
+
+```{r Findind spatial clustering}
+knitr::opts_chunk$set(global.device = TRUE)
+
+dbscan_result <- dbscan(coords, eps = 12, minPts = 5)
+
+tall_trees$dbscan_cluster <- as.factor(dbscan_result$cluster)
+colorsize = length (unique (tall_trees$dbscan_cluster))
+
+
+## Filter out first cluster
+cluster <- tall_trees %>%
+filter(dbscan_cluster != 0)
+plot(chm)
+plot(cluster[3], pch = 16, cex = .5, col = factor(cluster$dbscan_cluster), main = "Tree Clusters", add = TRUE)
+
+```
+
+##### Add locations of spatial clustering to leaflet map
+
+```{r Project onto leaflet map, echo = TRUE, warning = FALSE}
+pal <- colorFactor(brewer.pal(4, "Set1"), domain = tall_trees$dbscan_cluster)
+
+st_tall_trees <- st_transform(tall_trees, crs = 4326)
+
+st_tall_trees_filtered <- st_tall_trees %>%
+  filter(dbscan_cluster != 0)
+st_tall_trees_filtered$Z <- st_tall_trees_filtered$Z - 180
+
+
+leaflet (st_tall_trees_filtered) %>%
+  setView(lng = -78.793, lat = 43.007, zoom = 15)  %>%
+  addTiles() %>%
+  addCircleMarkers(
+    radius = 2,
+    color = ~pal(dbscan_cluster),
+    popup = ~paste("Tree ID:", treeID, "<br> Height (m):", Z,"<br> Coordinates:", geometry))
+
+```
+
+##### Load any required packages in a code chunk:
+
+```{r Packages, warning=F, echo = TRUE, output = FALSE}
+ #install.packages("sf")
+ #install.packages("terra")
+ #install.packages("lidR")
+ #install.packages("raster")
+ #install.packages("dbscan")
+ #install.packages("tidyverse")
+ #install.packages("leaflet")
+ #install.packages("RColorBrewer")
+ #install.packages("knitr")
+ #install.packages("rgl")
+
+```
+
+## Conclusions
+
+This study demonstrates the potential of using remote sensing data to assess forest structure with promising results. The analysis indicates a total of approximately 2,018 trees, with individual tree locations identified. Spatial clustering of the tallest trees were observed in six areas. The overall average height across the entire tree population was found to be 13.02 meters. It is important to note that the results , derived solely from remote sensing data and computational analysis, offer only a rough estimate of forest structure characteristics. For more precise and reliable conclusions, incorporating field data is essential to provide a reference for validating the remote sensing analysis.
+
+In conclusion, while remote sensing provides a faster method for assessing forest characteristics, the inclusion of field data is crucial to ensure the accuracy and reliability of the results. Combining both approaches will offer a more comprehensive understanding of forest dynamics.
+
+## References
+
+MacKinnon, A. (2012). *Forest Structure: A Key to the Ecosystem*. <https://www.semanticscholar.org/paper/Forest-Structure-%3A-A-Key-to-the-Ecosystem-MacKinnon/57c825a33e087bd8797333885ebf641ed8416377>
+
+USGS Lidar Point Cloud NY_3County_2019_A19 e1387n2349_2019—ScienceBase-Catalog. (n.d.). ScienceBase. Retrieved December 5, 2024,<https://www.sciencebase.gov/catalog/item/5f6b632982ce38aaa244d224>
+
+Wang, M., Baeten, L., Van Coillie, F., Calders, K., Verheyen, K., Ponette, Q., Blondeel, H., Muys, B., Armston, J., & Verbeeck, H. (2024). Tree species identity and interaction determine vertical forest structure in young planted forests measured by terrestrial laser scanning. Forest Ecosystems, 11, 100196. <https://doi.org/10.1016/j.fecs.2024.100196>
+
+Wulder, M. A., White, J. C., Nelson, R. F., Næsset, E., Ørka, H. O., Coops, N. C., Hilker, T., Bater, C. W., & Gobakken, T. (2012). Lidar sampling for large-area forest characterization: A review. *Remote Sensing of Environment*, *121*, 196–209. <https://doi.org/10.1016/j.rse.2012.02.001>
