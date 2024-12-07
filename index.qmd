@@ -1,120 +1,120 @@
 ---
-title: "My Final Project Template"
-author: Your name here
-subtitle: Subtitle here if desired
+title: "Visualizing the impact of hurricanes on mangroves over time"
+author: Isabel Liston
 date: today
 date-format: long
 ---
 
-# Introduction
+# Introduction:
 
-\[\~ 200 words\]
+Mangrove trees are a very important aspect of many coastal ecosystems. Many of these areas are also impacted by hurricanes, therefore it is beneficial to understand how hurricanes damage mangrove trees and how long it takes trees to recover from said damage. Following Hurricane Andrew in 1992 permanent study plots were established, then more were added to examine historic areas of study. In total there are 23 plots with data spanning 1992-2011. The goal of this project is to visualize many different aspects of how individual mangroves, different mangrove species and the plots overall respond to hurricanes over time.
 
-Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way. Include figures if you like.
+# Materials and Methods:
 
-# Materials and methods
+## Load libraries
 
-\[\~ 200 words\]
-
-Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.
-
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
-
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
-
-You can do bullets like this:
-
--   The first most important thing
--   The second most important thing
--   The third most important thing
-
-You can do numbers like this:
-
-1.  The first most important thing
-2.  The second most important thing
-3.  The third most important thing
-
-See <http://rmarkdown.rstudio.com/> for all the amazing things you can do.
-
-Here's my first code chunk.
-
-```{r}
-x=3+4
-```
-
-Refer to output in your narrative like this: x=`r x` .
-
-Load any required packages in a code chunk (you may need to install some packages):
-
-```{r, message=F, warning=F}
+```{r, warning = FALSE, message = FALSE}
+library(readr)
 library(tidyverse)
+library(ggplot2)
+library(drat)
+addRepo("geanders")
+update.packages("hurricaneexposure")
+update.packages("hurricaneexposuredata")
+library(hurricaneexposure)
+library(hurricaneexposuredata)
+library(sf)
+library(spData)
 library(leaflet)
-library(kableExtra)
-library(htmlwidgets)
-library(widgetframe)
-knitr::opts_chunk$set(widgetframe_widgets_dir = 'widgets' ) 
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
+library(foreach)
+library(doParallel)
+library(lubridate)
+library(grid)
+library(gtable)
+library(gridExtra)
+library(png)
 ```
 
-## Download and clean all required data
+## Load data
 
-```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
+```{r, warning = FALSE, message = FALSE}
+data("us_states")
+data("hurr_tracks")
+EVG_raw_data <- read.csv("data/Everglades_Mangrove_Vegetation_plot_data.csv")
 ```
 
-```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
+## Clean up data
+
+```{r, warning = FALSE, message = FALSE}
+#create the study area bounding box
+bbox_coords <- c(-81.2133, 25.5831,-80.9134, 25.1589)
+
+#create a polygon from the bounding box
+bbox_polygon <- st_as_sf(st_sfc(st_polygon(list(matrix(c(
+   bbox_coords[1], bbox_coords[2],  
+   bbox_coords[3], bbox_coords[2],
+   bbox_coords[3], bbox_coords[4],  
+   bbox_coords[1], bbox_coords[4],
+   bbox_coords[1], bbox_coords[2]   
+), ncol = 2, byrow = TRUE))), crs = 4269))
+
+study_crs <- st_crs(bbox_polygon)
+FL_state <- filter(us_states, NAME == "Florida")
+
+study_area <- st_crop(us_states, bbox_polygon)
+
+EVG_tidy <- EVG_raw_data %>%
+              subset(dbh_cm != "NA") %>%
+              group_by(plot_ID) %>%
+              mutate(across(contains("date"), ~ mdy(.))) %>%
+              arrange(., date)
+              
+EVG_tidy_spat <- EVG_tidy %>%
+                  st_as_sf(coords = c("longitude", "latitude"), 
+                           crs = study_crs)
+
+EVG_plots <- EVG_tidy_spat %>%
+              distinct(site, geometry)
 ```
 
-Add any additional processing steps here.
+# Results:
 
-# Results
+## Plot spatial distribution of study plots
 
-\[\~200 words\]
-
-Tables and figures (maps and other graphics) are carefully planned to convey the results of your analysis. Intense exploration and evidence of many trials and failures. The author looked at the data in many different ways before coming to the final presentation of the data.
-
-Show tables, plots, etc. and describe them.
-
-```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-m <- leaflet(data) %>% 
-  addTiles() %>% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %>% 
-  addPopups(~x[2], ~y[2], "Random popup")
-m  # a map with the default OSM tile layer
+```{r, warning = FALSE, message = FALSE}
+plot_dist <- leaflet(EVG_tidy_spat)%>%
+                addTiles()%>%
+                fitBounds(-81.2133, 25.5831,-80.9134, 25.1589)%>%
+                addMarkers(data = EVG_plots)
+plot_dist    
 ```
 
-```{r}
-data %>% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()
+## Plot hurricane tracks passing through the study area between 1992-2011
+
+```{r, warning = FALSE, message = FALSE}
+hurr_paths <- map_tracks(storms = c("Andrew-1992","Irene-1999",
+                                    "Katrina-2005", "Wilma-2005"))
+
+hurr_paths_spat <- hurr_paths[["layers"]][[2]][["data"]] %>%
+                    st_as_sf(.,coords = c("longitude", "latitude"), 
+                              crs = 4269) %>%
+                    st_crop(.,FL_state)
+ggplot() +
+  geom_sf(data = FL_state) +
+  geom_sf(data = study_area, fill = "green")+
+  geom_sf(data = hurr_paths_spat, aes(color = storm_id))
 ```
 
-### Dygraphs Example
-
-```{r}
-library(dygraphs)
-dygraph(nhtemp, main = "New Haven Temperatures") |> 
-  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01")) 
-```
-
-# Conclusions
+# Conclusions:
 
 \[\~200 words\]
 
 Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
 
-# References
+# References:
 
-All sources are cited in a consistent manner
+Doyle, T. W., Smith, T. J., & Robblee, M. B. (1995). Wind Damage Effects of Hurricane Andrew on Mangrove Communities Along the Southwest Coast of Florida, USA. Journal of Coastal Research, 159–168.
+
+Laura C Feher, Thomas J. Smith III, Gordon H Anderson, Ginger Tiling-Range, Karen M. Balentine, Greg A Ward, Kevin R. T. Whelan, Christa L. Walker, Andre Daniels, Michael J Osland, & Fara S. Ilami. (n.d.). Everglades mangrove vegetation data from 23 long-term plots (1992-2011). U.S. Geological Survey. https://doi.org/10.5066/P13DONMU
+
+Smith III, T. J., Anderson, G., Balentine, K., Tiling, G., Ward, G., & Whelan, K. (2009). Cumulative Impacts of Hurricanes on Florida Mangrove Ecosystems: Sediment Deposition, Storm Surges and Vegetation. Wetlands, 29, 24–34. https://doi.org/10.1672/08-40.1
